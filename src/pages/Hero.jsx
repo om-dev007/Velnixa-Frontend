@@ -32,7 +32,7 @@ const Hero = () => {
               alt="Hero background"
               className="w-full sm:h-[90vh] object-cover"
               loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : "auto"}
+              fetchpriority={index === 0 ? "high" : "auto"}
             />
           </SwiperSlide>
         ))}

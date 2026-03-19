@@ -3,14 +3,14 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/useCart";
+// import { useCart } from "../context/useCart";
 import Toast from "../components/Toast";
 import { useState } from "react";
 
 const Like = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
   const [toast, setToast] = useState(null);
-  const { addToCart } = useCart()
+  // const { addToCart } = useCart()
 
   return (
     <>
@@ -53,7 +53,7 @@ const Like = () => {
                   </p>
 
                   <div className="flex gap-4 mt-2">
-                    <button
+                    {/* <button
                       onClick={() => {
                         addToCart(item, 1);
 
@@ -72,7 +72,7 @@ const Like = () => {
                    text-white transition"
                     >
                       Add to Cart
-                    </button>
+                    </button> */}
 
                     <button
                       onClick={() => removeFromWishlist(item.id, item.size)}

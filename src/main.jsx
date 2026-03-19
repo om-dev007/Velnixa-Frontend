@@ -5,10 +5,10 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { CartProvider } from "./context/CartContext"
 import { WishlistProvider } from './context/WishlistContext.jsx'
 import { HelmetProvider } from 'react-helmet-async'
 import { PageLoaderProvider } from './context/PageLoaderContext.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,9 +16,9 @@ createRoot(document.getElementById('root')).render(
       <WishlistProvider>
         <HelmetProvider>
           <BrowserRouter>
-            <CartProvider>
+            <AuthProvider>
               <App />
-            </CartProvider>
+            </AuthProvider>
           </BrowserRouter>
         </HelmetProvider>
       </WishlistProvider>

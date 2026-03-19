@@ -1,36 +1,57 @@
-import React from 'react'
 import { Helmet } from "react-helmet-async";
 import Navbar from '../components/Navbar'
 import menHero from '../assets/menHero.jpg'
-import { menData } from '../store/data'
 import Cards from '../components/Cards'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Loader from '../components/Loader';
+import ErrorState from '../components/ErrorState';
 
 const Men = () => {
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await axios.get("http://localhost:5000/products/men");
+      setProducts(res.data.product);
+
+    } catch (err) {
+      console.log(err);
+
+      if (!navigator.onLine) {
+        setError("No internet connection 🚫");
+      } else {
+        setError("Unable to load men's products 😕");
+      }
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
     <>
-
       <Helmet>
         <title>Men Clothing Collection | Oversized T-Shirts for Men | Velnixa</title>
 
         <meta
           name="description"
-          content="Shop premium men clothing at Velnixa. Explore oversized t-shirts, trendy fits & high-quality fabric with fast delivery across India."
+          content="Shop premium men clothing at Velnixa."
         />
 
-        <link
-          rel="canonical"
-          href="https://velnixa.vercel.app/mens"
-        />
-
-        <meta property="og:title" content="Men Clothing Collection | Velnixa" />
-        <meta
-          property="og:description"
-          content="Discover premium oversized t-shirts and men fashion at Velnixa."
-        />
-        <meta property="og:url" content="https://velnixa.vercel.app/mens" />
-        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://velnixa.vercel.app/mens" />
       </Helmet>
 
       <Navbar />
@@ -39,25 +60,45 @@ const Men = () => {
         <img
           className="w-full sm:w-[85%] rounded-2xl h-[30vh] sm:h-[70vh] shadow-sm object-cover"
           src={menHero}
-          alt="Men fashion collection - oversized t-shirts at Velnixa"
-          loading="lazy"
+          alt="Men fashion collection"
         />
       </div>
 
-      <div className="bg-[#FAF8F5] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 
-                      gap-x-5 gap-y-6 py-10 px-6 sm:px-10 md:px-16 lg:px-20">
+      <div className="bg-[#FAF8F5] min-h-[60vh] flex items-center justify-center">
 
-        <h1 className="sr-only">Men Clothing Collection at Velnixa</h1>
+        {loading && <Loader text="Loading men's collection..." />}
 
-        {menData.map((items) => (
-          <Link
-            to={`/product/${items.id}`}
-            key={items.id}
-            aria-label={`View ${items.title} - Men clothing at Velnixa`}
-          >
-            <Cards data={items} />
-          </Link>
-        ))}
+        {!loading && error && (
+          <ErrorState 
+            message={error} 
+            onRetry={fetchProducts} 
+          />
+        )}
+
+        {!loading && !error && products.length === 0 && (
+          <p className="text-gray-600 text-lg">
+            No products found 😶
+          </p>
+        )}
+
+        {!loading && !error && products.length > 0 && (
+          <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 
+                          gap-x-5 gap-y-6 py-10 px-6 sm:px-10 md:px-16 lg:px-20">
+
+            <h1 className="sr-only">Men Clothing Collection at Velnixa</h1>
+
+            {products.map((items) => (
+              <Link
+                to={`/products/${items._id}`}
+                key={`${items._id}`}
+              >
+                <Cards data={items} />
+              </Link>
+            ))}
+
+          </div>
+        )}
+
       </div>
 
       <Footer />
@@ -65,4 +106,4 @@ const Men = () => {
   )
 }
 
-export default Men
+export default Men;

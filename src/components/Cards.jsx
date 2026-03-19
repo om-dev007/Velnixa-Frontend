@@ -2,6 +2,7 @@ import React from "react";
 import { Star } from "lucide-react";
 
 const Cards = ({ data }) => {
+
   return (
     <div
       className="group w-full bg-white rounded-xl overflow-hidden
@@ -10,54 +11,42 @@ const Cards = ({ data }) => {
     >
 
       <div className="relative aspect-4/5 bg-gray-100 overflow-hidden">
-
-        <picture>
-          <source media="(min-width: 768px)" srcSet={data.image.desktop} />
-          <img
-            src={data.image.mobile}
-            alt={data.title}
-            loading="lazy"
-            className="w-full h-full object-cover
-                       transition-transform duration-500
-                       group-hover:scale-105"
-          />
-        </picture>
+        <img
+          src={data.image}
+          alt={data.name}
+          loading="lazy"
+          className="w-full h-full object-cover
+                     transition-transform duration-500
+                     group-hover:scale-105"
+        />
 
         <div
-          className="absolute bottom-2 left-1 sm:left-2 z-10
+          className="absolute bottom-2 left-2 z-10
                      flex items-center gap-1
                      bg-white/95 backdrop-blur
-                     px-1 py-1 rounded-md shadow-sm
-                     text-[11px] sm:text-xs font-semibold text-gray-800"
+                     px-2 py-1 rounded-md shadow-sm
+                     text-xs font-semibold text-gray-800"
         >
           <Star
-            className="text-green-600 fill-green-600
-                       w-2 h-2 sm:w-3.5 sm:h-3.5"
+            className="text-green-600 fill-green-600 w-3.5 h-3.5"
           />
           {data.rating}
         </div>
       </div>
 
       <div className="px-3 py-2">
-
         <h3
           className="text-sm sm:text-[15px]
                      font-medium text-gray-900
                      leading-snug line-clamp-1"
         >
-          {data.title}
+          {data.name}
         </h3>
 
         <div className="mt-1 flex items-center gap-2">
           <span className="text-base sm:text-[15px] font-semibold text-[#1F3D2B]">
             ${data.price}
           </span>
-
-          {data.discountPrice && (
-            <span className="text-xs text-gray-400 line-through">
-              ${data.discountPrice}
-            </span>
-          )}
         </div>
       </div>
     </div>

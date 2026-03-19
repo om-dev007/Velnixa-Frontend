@@ -1,58 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Cards from "../components/Cards";
-
-import { menData, womenData, kidsData } from "../store/data";
+import Loader from "../components/Loader";
+import ErrorState from "../components/ErrorState";
 
 const NewArrival = () => {
-    const newArrivals = [
-        ...menData.slice(-3),
-        ...womenData.slice(-3),
-        ...kidsData.slice(-3),
-    ];
-    return (
-        <>
-            <Helmet>
-                <title>New Arrivals | Latest Fashion Collection | Velnixa</title>
-                <meta
-                    name="description"
-                    content="Explore the latest fashion arrivals at Velnixa. Trendy styles, premium quality & best prices."
-                />
-                <link rel="canonical" href="https://velnixa.vercel.app/new-arrivals" />
-            </Helmet>
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-            <Navbar />
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-            <section className="bg-[#FAF8F5] px-5 sm:px-10 md:px-16 py-10 sm:py-14">
+      const res = await axios.get(
+        "http://localhost:5000/products/new-arrivals"
+      );
 
-                <div className="text-center mb-10">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1F3D2B]">
-                        New Arrivals
-                    </h1>
-                    <p className="mt-2 text-gray-600 text-sm sm:text-base">
-                        Fresh styles just landed at Velnixa
-                    </p>
-                </div>
+      setProducts(res.data.products);
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-                    {newArrivals.map((item) => (
-                        <Link
-                            key={item.id}
-                            to={`/product/${item.id}`}
-                        >
-                            <Cards data={item} />
-                        </Link>
-                    ))}
-                </div>
+    } catch (err) {
+      console.log(err);
 
-            </section>
+      if (!navigator.onLine) {
+        setError("No internet connection 🚫");
+      } else {
+        setError("Unable to load new arrivals 😕");
+      }
 
-            <Footer />
-        </>
-    );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  return (
+    <>
+      <Helmet>
+        <title>New Arrivals | Latest Fashion Collection | Velnixa</title>
+        <meta
+          name="description"
+          content="Explore the latest fashion arrivals at Velnixa."
+        />
+      </Helmet>
+
+      <Navbar />
+
+      {/* 🔥 LOADING */}
+      {loading && <Loader text="Loading new arrivals..." />}
+
+      {/* 🔥 ERROR */}
+      {!loading && error && (
+        <ErrorState 
+          message={error} 
+          onRetry={fetchProducts} 
+        />
+      )}
+
+      {/* 🔥 EMPTY */}
+      {!loading && !error && products.length === 0 && (
+        <div className="h-[60vh] flex items-center justify-center bg-[#FAF8F5]">
+          <p className="text-gray-600 text-lg">
+            No products found 😶
+          </p>
+        </div>
+      )}
+
+      {/* 🔥 NORMAL UI */}
+      {!loading && !error && products.length > 0 && (
+        <section className="bg-[#FAF8F5] px-5 sm:px-10 md:px-16 py-10 sm:py-14">
+          <div className="text-center mb-10">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1F3D2B]">
+              New Arrivals
+            </h1>
+            <p className="mt-2 text-gray-600 text-sm sm:text-base">
+              Fresh styles just landed at Velnixa
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            {products.map((item) => (
+              <Link key={`${item._id}`} to={`/products/${item._id}`}>
+                <Cards data={item} />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <Footer />
+    </>
+  );
 };
 
 export default NewArrival;

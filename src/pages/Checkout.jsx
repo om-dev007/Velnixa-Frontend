@@ -1,18 +1,88 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useCart } from "../context/useCart";
 import { CreditCard, Wallet, Truck } from "lucide-react";
 import { Helmet } from "react-helmet-async";
+import Loader from "../components/Loader";
+import ErrorState from "../components/ErrorState";
 
 const Checkout = () => {
-  const { cartItems } = useCart();
+
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [paymentMethod, setPaymentMethod] = useState("");
+
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch("http://localhost:5000/cart/get", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      if (data.success) {
+        const formattedItems = data.cart.items.map(item => ({
+          id: item.productId._id,
+          title: item.productId.name,
+          price: item.price,
+          quantity: item.quantity,
+        }));
+
+        setCartItems(formattedItems);
+      }
+
+    } catch (error) {
+      console.log(error);
+
+      if (!navigator.onLine) {
+        setError("No internet connection 🚫");
+      } else {
+        setError("Unable to load checkout 😕");
+      }
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <Loader text="Loading checkout..." />
+        <Footer />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <ErrorState message={error} onRetry={fetchCart} />
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>

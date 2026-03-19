@@ -1,101 +1,178 @@
 import { useParams } from "react-router-dom";
-import {
-  menData,
-  womenData,
-  kidsData,
-  data,
-  collectionData,
-} from "../store/data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { ArrowRight } from "lucide-react";
-import { Star } from "lucide-react";
-import { useCart } from "../context/useCart";
+import { ArrowRight, Star, Heart } from "lucide-react";
+import { useWishlist } from "../context/useWishlist";
 import Toast from "../components/Toast";
 import { Helmet } from "react-helmet-async";
-import { Heart } from "lucide-react";
-import { useWishlist } from "../context/useWishlist";
+import Loader from "../components/Loader";          // ✅ added
+import ErrorState from "../components/ErrorState";  // ✅ added
 
 const ProductDetail = () => {
+
   const { id } = useParams();
-  const { addToWishlist } = useWishlist()
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // ✅ added
 
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
-  const [toast, setToast] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [toast, setToast] = useState(null);
 
+  const { addToWishlist } = useWishlist();
 
-  const product =
-    menData.find((item) => item.id == id) ||
-    womenData.find((item) => item.id == id) ||
-    kidsData.find((item) => item.id == id) ||
-    data.find((item) => item.id == id) ||
-    collectionData.find((item) => item.id == id);
+  useEffect(() => {
 
-  if (!product) return null;
+    const fetchProduct = async () => {
 
-  const productSchema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    image: [
-      product.image.desktop || product.image.mobile
-    ],
-    description: product.description,
-    brand: {
-      "@type": "Brand",
-      name: "Velnixa"
-    },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "INR",
-      price: product.price,
-      availability: "https://schema.org/InStock",
-      url: `https://velnixa.vercel.app/product/${id}`
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: "20"
+      try {
+
+        const res = await fetch(
+          `http://localhost:5000/products/${id}`
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message);
+        }
+
+        setProduct(data.product);
+
+      } catch (error) {
+
+        console.log(error);
+
+        if (!navigator.onLine) {
+          setError("No internet connection 🚫");
+        } else {
+          setError("Unable to load product 😕");
+        }
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+    if (id) fetchProduct();
+
+  }, [id]);
+
+ const handleAddToCart = async () => {
+
+  if (!selectedSize) {
+    setToast({
+      message: "Please select size ❗",
+      type: "error",
+    });
+    return;
+  }
+
+  setToast({
+    message: "Adding to cart...",
+    type: "success",
+  });
+
+  try {
+
+    const res = await fetch("http://localhost:5000/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        productId: product._id,
+        quantity,
+        size: selectedSize,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
     }
-  };
 
+    setToast({
+      message: "Added to cart ✅",
+      type: "success",
+    });
+
+    setQuantity(1);
+    setSelectedSize(null);
+
+  } catch (error) {
+
+    setToast({
+      message: error.message || "Error ❌",
+      type: "error",
+    });
+
+  } finally {
+    setTimeout(() => setToast(null), 1500);
+  }
+};
+
+  // 🔥 LOADING (UI SAME, just loader replace)
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <Loader text="Loading product..." />
+        <Footer />
+      </>
+    );
+  }
+
+  // 🔥 ERROR
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <ErrorState 
+          message={error} 
+          onRetry={() => window.location.reload()} 
+        />
+        <Footer />
+      </>
+    );
+  }
+
+  // 🔥 NOT FOUND
+  if (!product) {
+    return (
+      <>
+        <Navbar />
+        <div className="py-20 text-center text-gray-600">
+          Product not found 😶
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
       <Helmet>
-        <title>{product.title} | Buy Online at Velnixa</title>
-
-        <meta
-          name="description"
-          content={product.description}
-        />
-
-        <link
-          rel="canonical"
-          href={`https://velnixa.vercel.app/product/${id}`}
-        />
-
-        <meta property="og:title" content={product.title} />
-        <meta property="og:description" content={product.description} />
-        <meta property="og:url" content={`https://velnixa.vercel.app/product/${id}`} />
-        <meta property="og:type" content="product" />
-
-        <script type="application/ld+json">
-          {JSON.stringify(productSchema)}
-        </script>
+        <title>{`${product.name} | Buy Online at Velnixa`}</title>
+        <meta name="description" content={product.description} />
       </Helmet>
+
       <Navbar />
 
-      <div className="bg-[#FAF8F5] py-4text-sm text-gray-500 px-6 md:px-16">
-        <div className="flex text-[10px] sm:text-sm items-center gap-0.5 flex-wrap">
-          Home <ArrowRight className="w-2" /> Shop{" "}
-          <ArrowRight className="w-2" /> {product.category}{" "}
-          <ArrowRight className="w-2" />{" "}
+      <div className="bg-[#FAF8F5] py-4 text-sm text-gray-500 px-6 md:px-16">
+        <div className="flex text-[10px] sm:text-sm items-center gap-1">
+          Home <ArrowRight className="w-2" />
+          Shop <ArrowRight className="w-2" />
+          {product.category} <ArrowRight className="w-2" />
           <span className="text-[#1F3D2B] font-medium">
-            {product.title}
+            {product.name}
           </span>
         </div>
       </div>
@@ -108,7 +185,7 @@ const ProductDetail = () => {
             {[1, 2, 3].map((_, i) => (
               <img
                 key={i}
-                src={product.image.mobile}
+                src={product.image}
                 alt=""
                 className="w-16 h-16 lg:w-20 lg:h-20 rounded-lg object-cover cursor-pointer"
               />
@@ -117,84 +194,66 @@ const ProductDetail = () => {
 
           <div className="flex order-1 lg:order-2 justify-center items-center">
             <picture>
-              <source
-                media="(min-width: 768px)"
-                srcSet={product.image.desktop}
-              />
+              <source media="(min-width: 768px)" srcSet={product.image} />
               <img
-                src={product.image.mobile}
-                alt={product.title}
+                src={product.image}
+                alt={product.name}
                 loading="lazy"
-                fetchPriority="high"
+                fetchpriority="high"
                 className="w-full max-w-65 sm:max-w-75 md:max-w-[320px] lg:max-w-95 object-cover rounded-xl"
               />
             </picture>
-
           </div>
 
-          <div className="space-y-5 order-3 md:order-3 text-center lg:text-start md:text-left">
+          <div className="space-y-5 order-3 text-center lg:text-start">
 
-            <h1 className="text-2xl text-center lg:text-start md:text-3xl font-semibold text-gray-900">
-              {product.title}
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900">
+              {product.name}
             </h1>
 
             <div className="flex gap-2 items-center justify-center lg:justify-start">
-              <div>
-                <Star className="w-4 text-gray-500" />
-              </div>
-              <div>
-                <span className="text-sm text-gray-600 font-medium">
-                  {product.rating}
-                </span>
-              </div>
-
-            </div>
-
-            <div className="flex gap-4 justify-center lg:justify-start items-center">
-              <span className="text-gray-400 line-through text-lg">
-                ${product.discountPrice}
-              </span>
-              <span className="text-[#1F3D2B] text-2xl font-bold">
-                ${product.price}
+              <Star className="w-4 text-gray-500" />
+              <span className="text-sm text-gray-600 font-medium">
+                {product.rating}
               </span>
             </div>
 
-            <p className="text-gray-600 text-sm text-center lg:text-start leading-relaxed">
+            <span className="text-[#1F3D2B] text-2xl font-bold">
+              ${product.price}
+            </span>
+
+            <p className="text-gray-600 text-sm">
               {product.description}
             </p>
 
             <div>
-              <p className="font-semibold text-center lg:text-start text-gray-700 mb-2">
-                Select Size
-              </p>
+              <p className="font-semibold mb-2">Select Size</p>
               <div className="flex gap-3 flex-wrap justify-center lg:justify-start">
-                {["S", "M", "L", "XL", "XXL"].map((size) => (
+                {["S","M","L","XL","XXL"].map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-4 outline-0 py-2 cursor-pointer rounded-lg text-sm border transition-all ${selectedSize === size ? "border-[#1F3D2B] bg-[#E6EEE8] text-[#1F3D2B] font-medium" : "border-gray-300 hover:border-[#1F3D2B]"}`}
+                    className={`px-4 cursor-pointer py-2 rounded-lg border ${
+                      selectedSize === size
+                        ? "border-[#1F3D2B] bg-[#E6EEE8]"
+                        : "border-gray-300"
+                    }`}
                   >
                     {size}
                   </button>
                 ))}
               </div>
-
             </div>
 
-            <div className="flex gap-4 justify-center lg:justify-start items-center">
+            <div className="flex gap-4 justify-center lg:justify-start">
               <button
                 disabled={!selectedSize}
-                onClick={() => {
-                  addToCart({ ...product, size: selectedSize }, quantity);
-                  setQuantity(1);
-                  setSelectedSize(null);
-                  setToast({ message: "Added to cart successfully", type: "success" });
-                  setTimeout(() => setToast(null), 2000);
-                }}
-                className={`mt-4 px-5 sm:px-8 py-3 outline-0 rounded-lg font-medium transition ${selectedSize
-                  ? "bg-[#2F6B4F] hover:bg-[#24563F] cursor-pointer text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
+                onClick={handleAddToCart}
+                className={`px-6 cursor-pointer py-3 rounded-lg ${
+                  selectedSize
+                    ? "bg-[#2F6B4F] text-white"
+                    : "bg-gray-300 text-gray-500"
+                }`}
               >
                 Add to Cart
               </button>
@@ -206,10 +265,7 @@ const ProductDetail = () => {
                   setToast({ message: "Added to wishlist ❤️", type: "success" });
                   setTimeout(() => setToast(null), 2000);
                 }}
-                className={`mt-4 px-4 py-3 outline-0 rounded-lg font-medium transition ${selectedSize
-                  ? "bg-[#2F6B4F] hover:bg-[#24563F] cursor-pointer text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
+                className="px-4 py-3 cursor-pointer bg-[#2F6B4F] text-white rounded-lg"
               >
                 <Heart />
               </button>
@@ -219,6 +275,7 @@ const ProductDetail = () => {
 
         </div>
       </section>
+
       {toast && (
         <div className="fixed top-5 right-5 z-50 animate-toast-in">
           <Toast message={toast.message} type={toast.type} />

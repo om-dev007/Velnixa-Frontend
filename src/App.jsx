@@ -10,11 +10,13 @@ import Help from "./pages/Help"
 import Offices from "./pages/Offices"
 import ScrollToTop from "./components/ScrollToTop"
 import Login from "./LoginSignUp/Login"
+import Register from "./LoginSignUp/Register"
 import Cart from "./pages/Cart"
 import NewArrival from "./pages/NewArrival"
 import Like from "./pages/Like"
 import Checkout from "./pages/Checkout"
 import Contact from "./pages/Contact"
+import Dashboard from "./pages/Dashboard"
 
 const isMaintenance = import.meta.env.VITE_MAINTENANCE === "true";
 
@@ -40,10 +42,12 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register/>} />
+        <Route path="/user" element={<Dashboard/>} />
         <Route path="/about" element={<About />} />
         <Route path="/mens" element={<Men />} />
         <Route path="/womens" element={<Women />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/kids" element={<Kids />} />
         <Route path="/help" element={<Help />} />
         <Route path="/cart" element={<Cart />} />
