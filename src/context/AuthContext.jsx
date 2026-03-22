@@ -33,38 +33,30 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (credentials) => {
         try {
-
             const { data } = await axios.post(
                 "https://velnixa-backend.onrender.com/api/auth/login",
-                credentials
+                credentials,
+                { withCredentials: true } // 🔥 ADD THIS: Otherwise the cookie won't save
             );
 
             setUser(data.user);
-
-            return {
-                success: true,
-                message: data.message
-            };
-
+            return { success: true, message: data.message };
         } catch (error) {
-
             return {
                 success: false,
                 message: error.response?.data?.message || "Login failed"
             };
-
         }
     };
 
     const logout = async () => {
         try {
-
             await axios.post(
-                "https://velnixa-backend.onrender.com/api/auth/logout"
+                "https://velnixa-backend.onrender.com/api/auth/logout",
+                {},
+                { withCredentials: true } // Good, keep this here!
             );
-
             setUser(null);
-
         } catch (error) {
             console.log(error);
         }
