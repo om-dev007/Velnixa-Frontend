@@ -19,7 +19,7 @@ const Checkout = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("http://localhost:5000/cart/get", {
+      const res = await fetch("https://velnixa-backend.onrender.com/cart/get", {
         method: "GET",
         credentials: "include",
       });

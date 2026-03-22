@@ -19,7 +19,7 @@ const NewArrival = () => {
       setError(null);
 
       const res = await axios.get(
-        "http://localhost:5000/products/new-arrivals"
+        "https://velnixa-backend.onrender.com/products/new-arrivals"
       );
 
       setProducts(res.data.products);
@@ -54,10 +54,8 @@ const NewArrival = () => {
 
       <Navbar />
 
-      {/* 🔥 LOADING */}
       {loading && <Loader text="Loading new arrivals..." />}
 
-      {/* 🔥 ERROR */}
       {!loading && error && (
         <ErrorState 
           message={error} 
@@ -65,7 +63,6 @@ const NewArrival = () => {
         />
       )}
 
-      {/* 🔥 EMPTY */}
       {!loading && !error && products.length === 0 && (
         <div className="h-[60vh] flex items-center justify-center bg-[#FAF8F5]">
           <p className="text-gray-600 text-lg">
@@ -74,7 +71,6 @@ const NewArrival = () => {
         </div>
       )}
 
-      {/* 🔥 NORMAL UI */}
       {!loading && !error && products.length > 0 && (
         <section className="bg-[#FAF8F5] px-5 sm:px-10 md:px-16 py-10 sm:py-14">
           <div className="text-center mb-10">

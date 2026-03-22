@@ -16,7 +16,7 @@ const Popular = () => {
             setLoading(true);
             setError(null);
 
-            const res = await axios.get("http://localhost:5000/products/data");
+            const res = await axios.get("https://velnixa-backend.onrender.com/products/data");
             setProducts(res.data.product);
 
         } catch (err) {
@@ -37,10 +37,8 @@ const Popular = () => {
         fetchProducts();
     }, []);
 
-    // 🔥 LOADING (reusable)
     if (loading) return <Loader text="Loading products..." />;
 
-    // 🔥 ERROR (reusable)
     if (error) {
         return (
             <ErrorState 
@@ -50,7 +48,6 @@ const Popular = () => {
         );
     }
 
-    // 🔥 EMPTY
     if (products.length === 0) {
         return (
             <div className="h-screen flex items-center justify-center bg-[#F5F1EB]">
@@ -61,7 +58,6 @@ const Popular = () => {
         );
     }
 
-    // 🔥 NORMAL UI
     return (
         <div className="py-10 px-5 sm:px-10 bg-[#F5F1EB] ">
             <div className=" text-center">

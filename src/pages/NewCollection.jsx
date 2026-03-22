@@ -16,13 +16,12 @@ const NewCollection = () => {
       setLoading(true)
       setError(null)
 
-      const res = await axios.get("http://localhost:5000/products/popular")
+      const res = await axios.get("https://velnixa-backend.onrender.com/products/popular")
       setProducts(res.data.product)
 
     } catch (err) {
       console.log(err)
 
-      // 🔥 smart error detect
       if (!navigator.onLine) {
         setError("No internet connection 🚫")
       } else {
@@ -38,10 +37,8 @@ const NewCollection = () => {
     fetchProducts()
   }, [])
 
-  // 🔥 LOADING
   if (loading) return <Loader text="Loading offers..." />
 
-  // 🔥 ERROR
   if (error) {
     return (
       <ErrorState 
@@ -51,7 +48,6 @@ const NewCollection = () => {
     )
   }
 
-  // 🔥 EMPTY
   if (products.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center bg-[#FAF8F5]">
@@ -62,7 +58,6 @@ const NewCollection = () => {
     )
   }
 
-  // 🔥 NORMAL UI
   return (
     <div className='pt-10 bg-[#FAF8F5] '>
       <div className='text-center'>
