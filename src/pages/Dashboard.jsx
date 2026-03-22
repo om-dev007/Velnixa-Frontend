@@ -33,8 +33,6 @@ const Dashboard = () => {
         return <div>Loading...</div>;
     }
 
-    console.log("User dashboard:", user);
-
     return (
         <>
             <Navbar />
