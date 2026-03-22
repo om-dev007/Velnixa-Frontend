@@ -3,11 +3,10 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ArrowRight, Star, Heart } from "lucide-react";
-import { useWishlist } from "../context/useWishlist";
 import Toast from "../components/Toast";
 import { Helmet } from "react-helmet-async";
-import Loader from "../components/Loader";          // ✅ added
-import ErrorState from "../components/ErrorState";  // ✅ added
+import Loader from "../components/Loader";
+import ErrorState from "../components/ErrorState";
 
 const ProductDetail = () => {
 
@@ -15,34 +14,26 @@ const ProductDetail = () => {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // ✅ added
+  const [error, setError] = useState(null);
 
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
   const [toast, setToast] = useState(null);
 
-  const { addToWishlist } = useWishlist();
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
 
     const fetchProduct = async () => {
-
       try {
-
-        const res = await fetch(
-          `http://localhost:5000/products/${id}`
-        );
-
+        const res = await fetch(`http://localhost:5000/products/${id}`);
         const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.message);
-        }
+        if (!res.ok) throw new Error(data.message);
 
         setProduct(data.product);
 
       } catch (error) {
-
         console.log(error);
 
         if (!navigator.onLine) {
@@ -52,74 +43,86 @@ const ProductDetail = () => {
         }
 
       } finally {
-
         setLoading(false);
-
       }
-
     };
 
     if (id) fetchProduct();
 
   }, [id]);
 
- const handleAddToCart = async () => {
+  const handleAddToCart = async () => {
 
-  if (!selectedSize) {
-    setToast({
-      message: "Please select size ❗",
-      type: "error",
-    });
-    return;
-  }
-
-  setToast({
-    message: "Adding to cart...",
-    type: "success",
-  });
-
-  try {
-
-    const res = await fetch("http://localhost:5000/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        productId: product._id,
-        quantity,
-        size: selectedSize,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message);
+    if (!selectedSize) {
+      setToast({ message: "Please select size ❗", type: "error" });
+      return;
     }
 
-    setToast({
-      message: "Added to cart ✅",
-      type: "success",
-    });
+    setToast({ message: "Adding to cart...", type: "success" });
 
-    setQuantity(1);
-    setSelectedSize(null);
+    try {
 
-  } catch (error) {
+      const res = await fetch("http://localhost:5000/cart/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          productId: product._id,
+          quantity,
+          size: selectedSize,
+        }),
+      });
 
-    setToast({
-      message: error.message || "Error ❌",
-      type: "error",
-    });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
 
-  } finally {
-    setTimeout(() => setToast(null), 1500);
-  }
-};
+      setToast({ message: "Added to cart ✅", type: "success" });
+      setQuantity(1);
+      setSelectedSize(null);
 
-  // 🔥 LOADING (UI SAME, just loader replace)
+    } catch (error) {
+      setToast({ message: error.message || "Error ❌", type: "error" });
+    } finally {
+      setTimeout(() => setToast(null), 1500);
+    }
+  };
+
+  const handleToggleWishlist = async () => {
+
+    if (!product?._id) return;
+
+    setWishlistLoading(true);
+
+    try {
+
+      const res = await fetch("http://localhost:5000/wishlist/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          productId: product._id
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setToast({
+        message: data.message,
+        type: "success",
+      });
+
+    } catch (error) {
+      setToast({
+        message: error.message || "Wishlist error ❌",
+        type: "error",
+      });
+    } finally {
+      setWishlistLoading(false);
+      setTimeout(() => setToast(null), 1500);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -130,7 +133,6 @@ const ProductDetail = () => {
     );
   }
 
-  // 🔥 ERROR
   if (error) {
     return (
       <>
@@ -144,7 +146,6 @@ const ProductDetail = () => {
     );
   }
 
-  // 🔥 NOT FOUND
   if (!product) {
     return (
       <>
@@ -179,7 +180,7 @@ const ProductDetail = () => {
 
       <section className="bg-[#FAF8F5] px-5 sm:px-10 md:px-16 py-10 sm:py-12">
         <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm p-6 md:p-10
-                  grid grid-cols-1 lg:grid-cols-[90px_1.3fr_1.7fr] gap-6">
+          grid grid-cols-1 lg:grid-cols-[90px_1.3fr_1.7fr] gap-6">
 
           <div className="flex lg:flex-col gap-3 order-2 lg:order-1 justify-center lg:justify-start">
             {[1, 2, 3].map((_, i) => (
@@ -198,8 +199,6 @@ const ProductDetail = () => {
               <img
                 src={product.image}
                 alt={product.name}
-                loading="lazy"
-                fetchpriority="high"
                 className="w-full max-w-65 sm:max-w-75 md:max-w-[320px] lg:max-w-95 object-cover rounded-xl"
               />
             </picture>
@@ -233,7 +232,7 @@ const ProductDetail = () => {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-4 cursor-pointer py-2 rounded-lg border ${
+                    className={`px-4 py-2 rounded-lg border ${
                       selectedSize === size
                         ? "border-[#1F3D2B] bg-[#E6EEE8]"
                         : "border-gray-300"
@@ -249,7 +248,7 @@ const ProductDetail = () => {
               <button
                 disabled={!selectedSize}
                 onClick={handleAddToCart}
-                className={`px-6 cursor-pointer py-3 rounded-lg ${
+                className={`px-6 py-3 rounded-lg ${
                   selectedSize
                     ? "bg-[#2F6B4F] text-white"
                     : "bg-gray-300 text-gray-500"
@@ -259,13 +258,9 @@ const ProductDetail = () => {
               </button>
 
               <button
-                disabled={!selectedSize}
-                onClick={() => {
-                  addToWishlist({ ...product, size: selectedSize });
-                  setToast({ message: "Added to wishlist ❤️", type: "success" });
-                  setTimeout(() => setToast(null), 2000);
-                }}
-                className="px-4 py-3 cursor-pointer bg-[#2F6B4F] text-white rounded-lg"
+                disabled={wishlistLoading}
+                onClick={handleToggleWishlist}
+                className="px-4 py-3 bg-[#2F6B4F] text-white rounded-lg"
               >
                 <Heart />
               </button>

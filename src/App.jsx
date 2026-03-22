@@ -20,7 +20,6 @@ import Dashboard from "./pages/Dashboard"
 
 const isMaintenance = import.meta.env.VITE_MAINTENANCE === "true";
 
-
 const App = () => {
 
   if (isMaintenance) {
