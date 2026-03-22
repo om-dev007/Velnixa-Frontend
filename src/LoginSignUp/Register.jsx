@@ -37,7 +37,6 @@ const Register = () => {
         setInput({ ...input, [e.target.name]: e.target.value });
     };
 
-    // ✅ If user already logged in
     useEffect(() => {
         if (user) {
             showToast("Please logout first before creating another account", "error");
@@ -52,7 +51,6 @@ const Register = () => {
 
         e.preventDefault();
 
-        // ✅ Double protection
         if (user) {
             showToast("Please logout first before creating another account", "error");
             return;

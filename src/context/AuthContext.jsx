@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
         try {
 
             const { data } = await axios.get(
-                "http://localhost:5000/user/profile"
+                "https://velnixa-backend.onrender.com/user/profile"
             );
 
             setUser(data.user);
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         try {
 
             const { data } = await axios.post(
-                "http://localhost:5000/api/auth/login",
+                "https://velnixa-backend.onrender.com/api/auth/login",
                 credentials
             );
 
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         try {
 
             await axios.post(
-                "http://localhost:5000/api/auth/logout"
+                "https://velnixa-backend.onrender.com/api/auth/logout"
             );
 
             setUser(null);
