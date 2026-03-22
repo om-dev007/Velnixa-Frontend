@@ -232,7 +232,7 @@ const ProductDetail = () => {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 rounded-lg border ${
+                    className={`px-4 cursor-pointer py-2 rounded-lg border ${
                       selectedSize === size
                         ? "border-[#1F3D2B] bg-[#E6EEE8]"
                         : "border-gray-300"
@@ -248,7 +248,7 @@ const ProductDetail = () => {
               <button
                 disabled={!selectedSize}
                 onClick={handleAddToCart}
-                className={`px-6 py-3 rounded-lg ${
+                className={`px-6 py-3 rounded-lg cursor-pointer ${
                   selectedSize
                     ? "bg-[#2F6B4F] text-white"
                     : "bg-gray-300 text-gray-500"
@@ -260,7 +260,7 @@ const ProductDetail = () => {
               <button
                 disabled={wishlistLoading}
                 onClick={handleToggleWishlist}
-                className="px-4 py-3 bg-[#2F6B4F] text-white rounded-lg"
+                className="px-4 py-3 cursor-pointer bg-[#2F6B4F] text-white rounded-lg"
               >
                 <Heart />
               </button>
