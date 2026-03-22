@@ -108,9 +108,9 @@ const Checkout = () => {
               </h2>
 
               <div className="space-y-4">
-                {cartItems.map((item) => (
+                {cartItems.map((item, index) => (
                   <div
-                    key={item.id}
+                    key={`${item._id}-${item.size}-${index}`}
                     className="flex justify-between items-center text-sm text-gray-700"
                   >
                     <div>
