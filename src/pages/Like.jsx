@@ -19,7 +19,7 @@ const Like = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("http://localhost:5000/wishlist", {
+      const res = await fetch("https://velnixa-backend.onrender.com/wishlist", {
         credentials: "include",
       });
 
@@ -57,7 +57,7 @@ const Like = () => {
     try {
 
       const res = await fetch(
-        `http://localhost:5000/wishlist/${productId}`,
+        `https://velnixa-backend.onrender.com/wishlist/${productId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -88,7 +88,7 @@ const Like = () => {
   const handleAddToCart = async (productId) => {
     try {
 
-      const res = await fetch("http://localhost:5000/cart/add", {
+      const res = await fetch("https://velnixa-backend.onrender.com/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
