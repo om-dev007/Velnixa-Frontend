@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
         try {
 
             const { data } = await axios.get(
-                "https://velnixa-backend.onrender.com/user/profile"
+                "https://velnixa-backend.vercel.app/user/profile"
             );
 
             setUser(data.user);
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const { data } = await axios.post(
-                "https://velnixa-backend.onrender.com/api/auth/login",
+                "https://velnixa-backend.vercel.app/api/auth/login",
                 credentials,
                 { withCredentials: true } // 🔥 ADD THIS: Otherwise the cookie won't save
             );
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             await axios.post(
-                "https://velnixa-backend.onrender.com/api/auth/logout",
+                "https://velnixa-backend.vercel.app/api/auth/logout",
                 {},
                 { withCredentials: true } // Good, keep this here!
             );
