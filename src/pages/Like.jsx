@@ -39,6 +39,7 @@ const Like = () => {
       setWishlist(formatted);
 
     } catch (error) {
+      console.log(error)
       setError(
         !navigator.onLine
           ? "No internet connection 🚫"
