@@ -20,7 +20,7 @@ const Men = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("http://localhost:5000/products/men");
+      const res = await axios.get("https://velnixa-backend.onrender.com/products/men");
       setProducts(res.data.product);
 
     } catch (err) {
