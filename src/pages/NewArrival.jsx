@@ -19,7 +19,7 @@ const NewArrival = () => {
       setError(null);
 
       const res = await axios.get(
-        "https://velnixa-backend.onrender.com/products/new-arrivals"
+        "https://velnixa-backend.vercel.app/products/new-arrivals"
       );
 
       setProducts(res.data.products);

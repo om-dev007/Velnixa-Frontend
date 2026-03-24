@@ -26,7 +26,7 @@ const ProductDetail = () => {
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`https://velnixa-backend.onrender.com/products/${id}`);
+        const res = await fetch(`https://velnixa-backend.vercel.app/products/${id}`);
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message);
@@ -62,7 +62,7 @@ const ProductDetail = () => {
 
     try {
 
-      const res = await fetch("https://velnixa-backend.onrender.com/cart/add", {
+      const res = await fetch("https://velnixa-backend.vercel.app/cart/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -95,7 +95,7 @@ const ProductDetail = () => {
 
     try {
 
-      const res = await fetch("https://velnixa-backend.onrender.com/wishlist/toggle", {
+      const res = await fetch("https://velnixa-backend.vercel.app/wishlist/toggle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

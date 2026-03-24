@@ -16,7 +16,7 @@ const NewCollection = () => {
       setLoading(true)
       setError(null)
 
-      const res = await axios.get("https://velnixa-backend.onrender.com/products/popular")
+      const res = await axios.get("https://velnixa-backend.vercel.app/products/popular")
       setProducts(res.data.product)
 
     } catch (err) {

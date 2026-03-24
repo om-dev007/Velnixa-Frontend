@@ -20,7 +20,7 @@ const Women = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("https://velnixa-backend.onrender.com/products/women");
+      const res = await axios.get("https://velnixa-backend.vercel.app/products/women");
       setProducts(res.data.product);
 
     } catch (err) {

@@ -20,7 +20,7 @@ const Cart = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("https://velnixa-backend.onrender.com/cart/get", {
+      const res = await fetch("https://velnixa-backend.vercel.app/cart/get", {
         method: "GET",
         credentials: "include",
       });
@@ -68,7 +68,7 @@ const Cart = () => {
     );
 
     try {
-      await fetch(`https://velnixa-backend.onrender.com/cart/delete/${productId}/${size}`, {
+      await fetch(`https://velnixa-backend.vercel.app/cart/delete/${productId}/${size}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -94,7 +94,7 @@ const Cart = () => {
     );
 
     try {
-      await fetch("https://velnixa-backend.onrender.com/cart/update", {
+      await fetch("https://velnixa-backend.vercel.app/cart/update", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

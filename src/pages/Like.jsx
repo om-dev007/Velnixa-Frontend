@@ -19,7 +19,7 @@ const Like = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("https://velnixa-backend.onrender.com/wishlist", {
+      const res = await fetch("https://velnixa-backend.vercel.app/wishlist", {
         credentials: "include",
       });
 

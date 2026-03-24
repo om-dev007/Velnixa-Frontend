@@ -19,7 +19,7 @@ const Checkout = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("https://velnixa-backend.onrender.com/cart/get", {
+      const res = await fetch("https://velnixa-backend.vercel.app/cart/get", {
         method: "GET",
         credentials: "include",
       });

@@ -16,7 +16,7 @@ const Popular = () => {
             setLoading(true);
             setError(null);
 
-            const res = await axios.get("https://velnixa-backend.onrender.com/products/data");
+            const res = await axios.get("https://velnixa-backend.vercel.app/products/data");
             setProducts(res.data.product);
 
         } catch (err) {
