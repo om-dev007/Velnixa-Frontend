@@ -129,9 +129,22 @@ const Like = () => {
         </h1>
 
         {(wishlist?.length || 0) === 0 ? (
-          <p className="text-center text-gray-500">
-            No liked products yet
-          </p>
+          <div className="flex flex-col items-center justify-center mt-20 gap-5">
+
+            <p className="text-gray-500 text-lg">
+              No liked products yet
+            </p>
+
+            {user && (
+              <Link
+                to="/"
+                className="bg-[#2F6B4F] hover:bg-[#24563F] text-white px-8 py-3 rounded-xl text-sm font-medium shadow-sm"
+              >
+                Start Shopping 🛍️
+              </Link>
+            )}
+
+          </div>
         ) : (
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
 

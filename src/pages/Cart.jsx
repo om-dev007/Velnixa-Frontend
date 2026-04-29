@@ -55,16 +55,20 @@ const Cart = () => {
       setCartItems(formattedItems);
 
     } catch (err) {
+
+      if (err?.message?.includes("Unauthorized")) {
+        return;
+      }
+
       setError(
         !navigator.onLine
           ? "No internet connection 🚫"
-          : err.message || "Unable to load cart 😕"
+          : err.message || "Unable to load cart"
       );
     } finally {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     if (user) {
@@ -121,11 +125,28 @@ const Cart = () => {
     );
   }
 
-  if (error) {
+  if (error && (cartItems?.length || 0) === 0) {
     return (
       <>
         <Navbar />
-        <ErrorState message={error} onRetry={fetchCart} />
+
+        <section className="bg-[#FAF8F5] min-h-screen flex flex-col items-center justify-center gap-5">
+
+          <p className="text-gray-500 text-lg">
+            Unable to load cart
+          </p>
+
+          {user && (
+            <Link
+              to="/"
+              className="bg-[#2F6B4F] hover:bg-[#24563F] text-white px-8 py-3 rounded-xl text-sm font-medium shadow-sm"
+            >
+              Start Shopping 🛍️
+            </Link>
+          )}
+
+        </section>
+
         <Footer />
       </>
     );
@@ -146,16 +167,21 @@ const Cart = () => {
         </h1>
 
         {(cartItems?.length || 0) === 0 ? (
-          <div className="text-center mt-20">
-            <p className="text-gray-500 mb-6">
+          <div className="flex flex-col items-center justify-center mt-20 gap-5">
+
+            <p className="text-gray-500 text-lg">
               Your cart is currently empty
             </p>
-            <Link
-              to="/"
-              className="inline-block bg-[#2F6B4F] hover:bg-[#24563F] text-white px-6 py-3 rounded-lg"
-            >
-              Continue Shopping
-            </Link>
+
+            {user && (
+              <Link
+                to="/"
+                className="bg-[#2F6B4F] hover:bg-[#24563F] text-white px-8 py-3 rounded-xl text-sm font-medium shadow-sm"
+              >
+                Start Shopping 🛍️
+              </Link>
+            )}
+
           </div>
         ) : (
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
