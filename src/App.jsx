@@ -32,7 +32,7 @@ const App = () => {
       </div>
     );
   }
-
+  
 
   return (
     <div className='bg-white min-h-screen text-black'>

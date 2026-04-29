@@ -5,9 +5,9 @@ import Cards from '../components/Cards'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Loader from '../components/Loader';
 import ErrorState from '../components/ErrorState';
+import { getMenProducts } from "../api/product.api";
 
 const Men = () => {
 
@@ -20,8 +20,9 @@ const Men = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("https://velnixa-backend.vercel.app/products/men");
-      setProducts(res.data.product);
+      const res = await getMenProducts()
+      const {data} = res.data;
+      setProducts(data);
 
     } catch (err) {
       console.log(err);
@@ -90,7 +91,7 @@ const Men = () => {
             {products.map((items) => (
               <Link
                 to={`/products/${items._id}`}
-                key={`${items._id}`}
+                key={items._id}
               >
                 <Cards data={items} />
               </Link>

@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 const Login = () => {
 
-    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const { user, login } = useAuth();
+
+    useEffect(() => {
+        if (user) {
+            navigate("/user");
+        }
+    }, [user]);
 
     const [input, setInput] = useState({
         email: "",
         password: "",
     });
-
-    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [toasts, setToasts] = useState([]);
@@ -38,30 +44,33 @@ const Login = () => {
 
         setLoading(true);
 
-        const res = await login(input);
+        try {
 
-        if (res.success) {
+            const res = await login(input);
+
+            if (!res.success) {
+                throw new Error(res.message);
+            }
 
             showToast(res.message || "Login Successful!", "success");
 
             setTimeout(() => {
                 navigate("/user");
-            }, 2000);
+            }, 1500);
 
-        } else {
+        } catch (error) {
 
-            showToast(res.message, "error");
+            showToast(error.message || "Login Failed", "error");
 
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     return (
         <>
             <Helmet>
                 <title>Login | Velnixa</title>
-                <meta name="robots" content="noindex, nofollow" />
             </Helmet>
 
             <Navbar />
@@ -114,18 +123,14 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium hover:bg-[#24563F] transition-all cursor-pointer"
+                            className="w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium"
                         >
                             {loading ? "Logging in..." : "Login"}
                         </button>
 
-                        {/* Register link */}
                         <p className="text-sm text-center text-gray-500">
                             Don’t have an account?{" "}
-                            <Link
-                                to="/register"
-                                className="text-[#2F6B4F] font-medium hover:underline"
-                            >
+                            <Link to="/register" className="text-[#2F6B4F] font-medium">
                                 Register
                             </Link>
                         </p>
@@ -136,16 +141,7 @@ const Login = () => {
 
                 <div className="fixed top-5 right-5 flex flex-col gap-3 z-50">
                     {toasts.map((t) => (
-                        <Toast
-                            key={t.id}
-                            message={t.message}
-                            type={t.type}
-                            onClose={() =>
-                                setToasts((prev) =>
-                                    prev.filter((toast) => toast.id !== t.id)
-                                )
-                            }
-                        />
+                        <Toast key={t.id} message={t.message} type={t.type} />
                     ))}
                 </div>
 

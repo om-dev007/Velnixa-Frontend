@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { Trash2, ShoppingCart } from "lucide-react";
 import Loader from "../components/Loader";        // ✅ added
 import ErrorState from "../components/ErrorState"; // ✅ added
+import { getWishlist, removeFromWish } from "../api/wishlist.api";
+import { addToCart } from "../api/cart.api";
 
 const Like = () => {
 
@@ -19,17 +21,12 @@ const Like = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("https://velnixa-backend.vercel.app/wishlist", {
-        credentials: "include",
-      });
+      const res = await getWishlist();
+      const { success, data } = res.data;
 
-      const data = await res.json();
+      if (!success) throw new Error();
 
-      if (!res.ok) {
-        throw new Error();
-      }
-
-      const formatted = data.wishlist.items.map(item => ({
+      const formatted = data.items.map(item => ({
         id: item.productId._id,
         title: item.productId.name,
         price: item.productId.price,
@@ -38,13 +35,8 @@ const Like = () => {
 
       setWishlist(formatted);
 
-    } catch (error) {
-      console.log(error)
-      setError(
-        !navigator.onLine
-          ? "No internet connection 🚫"
-          : "Unable to load wishlist 😕"
-      );
+    } catch {
+      setError(!navigator.onLine ? "No internet connection 🚫" : "Unable to load wishlist 😕");
     } finally {
       setLoading(false);
     }
@@ -56,31 +48,14 @@ const Like = () => {
 
   const removeFromWishlist = async (productId) => {
     try {
+      await removeFromWish(productId);
 
-      const res = await fetch(
-        `https://velnixa-backend.onrender.com/wishlist/${productId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      setWishlist(prev => prev.filter(item => item.id !== productId));
 
-      if (!res.ok) throw new Error();
-
-      setWishlist(prev =>
-        prev.filter(item => item.id !== productId)
-      );
-
-      setToast({
-        message: "Removed from wishlist ❌",
-        type: "success",
-      });
+      setToast({ message: "Removed from wishlist ❌", type: "success" });
 
     } catch {
-      setToast({
-        message: "Error removing ❌",
-        type: "error",
-      });
+      setToast({ message: "Error removing ❌", type: "error" });
     } finally {
       setTimeout(() => setToast(null), 1500);
     }
@@ -88,32 +63,16 @@ const Like = () => {
 
   const handleAddToCart = async (productId) => {
     try {
-
-      const res = await fetch("https://velnixa-backend.onrender.com/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          productId,
-          quantity: 1,
-          size: "M"
-        })
+      await addToCart({
+        productId,
+        quantity: 1,
+        size: "M"
       });
 
-      if (!res.ok) throw new Error();
-
-      setToast({
-        message: "Added to cart 🛒",
-        type: "success",
-      });
+      setToast({ message: "Added to cart 🛒", type: "success" });
 
     } catch {
-      setToast({
-        message: "Error adding to cart ❌",
-        type: "error",
-      });
+      setToast({ message: "Error adding to cart ❌", type: "error" });
     } finally {
       setTimeout(() => setToast(null), 1500);
     }

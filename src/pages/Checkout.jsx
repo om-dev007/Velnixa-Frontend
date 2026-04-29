@@ -5,6 +5,7 @@ import { CreditCard, Wallet, Truck } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import Loader from "../components/Loader";
 import ErrorState from "../components/ErrorState";
+import { getCart } from "../api/cart.api";
 
 const Checkout = () => {
 
@@ -19,37 +20,22 @@ const Checkout = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("https://velnixa-backend.vercel.app/cart/get", {
-        method: "GET",
-        credentials: "include",
-      });
+      const res = await getCart();
+      const { success, data } = res.data;
 
-      const data = await res.json();
+      if (!success) throw new Error();
 
-      if (!res.ok) {
-        throw new Error(data.message);
-      }
+      const formattedItems = data.items.map(item => ({
+        id: item.productId._id,
+        title: item.productId.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
 
-      if (data.success) {
-        const formattedItems = data.cart.items.map(item => ({
-          id: item.productId._id,
-          title: item.productId.name,
-          price: item.price,
-          quantity: item.quantity,
-        }));
+      setCartItems(formattedItems);
 
-        setCartItems(formattedItems);
-      }
-
-    } catch (error) {
-      console.log(error);
-
-      if (!navigator.onLine) {
-        setError("No internet connection 🚫");
-      } else {
-        setError("Unable to load checkout 😕");
-      }
-
+    } catch {
+      setError(!navigator.onLine ? "No internet connection 🚫" : "Unable to load checkout 😕");
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Cards from "../components/Cards";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getDataProducts } from "../api/product.api";
 import Loader from "../components/Loader";
 import ErrorState from "../components/ErrorState";
 
@@ -16,8 +16,9 @@ const Popular = () => {
             setLoading(true);
             setError(null);
 
-            const res = await axios.get("https://velnixa-backend.vercel.app/products/data");
-            setProducts(res.data.product);
+            const res = await getDataProducts()
+            const {data} = res.data;
+            setProducts(data);
 
         } catch (err) {
             console.log(err);

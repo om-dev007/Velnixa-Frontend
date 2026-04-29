@@ -5,9 +5,9 @@ import creative from '../assets/summer-fashion-sale-banner-design-template-62077
 import Cards from '../components/Cards'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
-import axios from 'axios';
 import Loader from '../components/Loader';
 import ErrorState from '../components/ErrorState';
+import { getWomenProducts } from '../api/product.api';
 
 const Women = () => {
 
@@ -20,8 +20,9 @@ const Women = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("https://velnixa-backend.vercel.app/products/women");
-      setProducts(res.data.product);
+      const res = await getWomenProducts();
+      const {data} = res.data
+      setProducts(data);
 
     } catch (err) {
       console.log(err);

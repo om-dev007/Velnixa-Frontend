@@ -7,7 +7,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import { HelmetProvider } from 'react-helmet-async'
 import { PageLoaderProvider } from './context/PageLoaderContext.jsx'
-import { AuthProvider } from './context/AuthContext.jsx'
+import { AuthProvider } from './context/AuthProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

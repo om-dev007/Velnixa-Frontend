@@ -7,6 +7,9 @@ import Toast from "../components/Toast";
 import { Helmet } from "react-helmet-async";
 import Loader from "../components/Loader";
 import ErrorState from "../components/ErrorState";
+import { getProductById } from "../api/product.api";
+import { addToCart } from "../api/cart.api";
+import { toggleWishlist } from "../api/wishlist.api";
 
 const ProductDetail = () => {
 
@@ -26,22 +29,21 @@ const ProductDetail = () => {
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`https://velnixa-backend.vercel.app/products/${id}`);
-        const data = await res.json();
+        const res = await getProductById(id);
+        const { success, data, message } = res.data;
 
-        if (!res.ok) throw new Error(data.message);
+        if (!success) {
+          throw new Error(message);
+        }
 
-        setProduct(data.product);
+        setProduct(data);
 
       } catch (error) {
-        console.log(error);
-
         if (!navigator.onLine) {
           setError("No internet connection 🚫");
         } else {
-          setError("Unable to load product 😕");
+          setError(error.message || "Unable to load product 😕");
         }
-
       } finally {
         setLoading(false);
       }
@@ -62,19 +64,17 @@ const ProductDetail = () => {
 
     try {
 
-      const res = await fetch("https://velnixa-backend.vercel.app/cart/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          productId: product._id,
-          quantity,
-          size: selectedSize,
-        }),
+      const res = await addToCart({
+        productId: product._id,
+        quantity,
+        size: selectedSize,
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      const { success, message } = res.data;
+
+      if (!success) {
+        throw new Error(message);
+      }
 
       setToast({ message: "Added to cart ✅", type: "success" });
       setQuantity(1);
@@ -95,22 +95,14 @@ const ProductDetail = () => {
 
     try {
 
-      const res = await fetch("https://velnixa-backend.vercel.app/wishlist/toggle", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          productId: product._id
-        }),
-      });
+      const res = await toggleWishlist(product._id);
+      const { success, message } = res.data;
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!success) {
+        throw new Error(message);
+      }
 
-      setToast({
-        message: data.message,
-        type: "success",
-      });
+      setToast({ message, type: "success" });
 
     } catch (error) {
       setToast({
@@ -137,10 +129,7 @@ const ProductDetail = () => {
     return (
       <>
         <Navbar />
-        <ErrorState 
-          message={error} 
-          onRetry={() => window.location.reload()} 
-        />
+        <ErrorState message={error} onRetry={() => window.location.reload()} />
         <Footer />
       </>
     );
@@ -179,29 +168,16 @@ const ProductDetail = () => {
       </div>
 
       <section className="bg-[#FAF8F5] px-5 sm:px-10 md:px-16 py-10 sm:py-12">
-        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm p-6 md:p-10
-          grid grid-cols-1 lg:grid-cols-[90px_1.3fr_1.7fr] gap-6">
+        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm p-6 md:p-10 grid grid-cols-1 lg:grid-cols-[90px_1.3fr_1.7fr] gap-6">
 
           <div className="flex lg:flex-col gap-3 order-2 lg:order-1 justify-center lg:justify-start">
             {[1, 2, 3].map((_, i) => (
-              <img
-                key={i}
-                src={product.image}
-                alt=""
-                className="w-16 h-16 lg:w-20 lg:h-20 rounded-lg object-cover cursor-pointer"
-              />
+              <img key={i} src={product.image} className="w-16 h-16 lg:w-20 lg:h-20 rounded-lg object-cover cursor-pointer" />
             ))}
           </div>
 
           <div className="flex order-1 lg:order-2 justify-center items-center">
-            <picture>
-              <source media="(min-width: 768px)" srcSet={product.image} />
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full max-w-65 sm:max-w-75 md:max-w-[320px] lg:max-w-95 object-cover rounded-xl"
-              />
-            </picture>
+            <img src={product.image} className="w-full max-w-65 sm:max-w-75 md:max-w-[320px] lg:max-w-95 object-cover rounded-xl" />
           </div>
 
           <div className="space-y-5 order-3 text-center lg:text-start">
@@ -228,15 +204,11 @@ const ProductDetail = () => {
             <div>
               <p className="font-semibold mb-2">Select Size</p>
               <div className="flex gap-3 flex-wrap justify-center lg:justify-start">
-                {["S","M","L","XL","XXL"].map((size) => (
+                {["S", "M", "L", "XL", "XXL"].map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-4 cursor-pointer py-2 rounded-lg border ${
-                      selectedSize === size
-                        ? "border-[#1F3D2B] bg-[#E6EEE8]"
-                        : "border-gray-300"
-                    }`}
+                    className={`px-4 py-2 rounded-lg border ${selectedSize === size ? "border-[#1F3D2B] bg-[#E6EEE8]" : "border-gray-300"}`}
                   >
                     {size}
                   </button>
@@ -248,11 +220,7 @@ const ProductDetail = () => {
               <button
                 disabled={!selectedSize}
                 onClick={handleAddToCart}
-                className={`px-6 py-3 rounded-lg cursor-pointer ${
-                  selectedSize
-                    ? "bg-[#2F6B4F] text-white"
-                    : "bg-gray-300 text-gray-500"
-                }`}
+                className={`px-6 py-3 rounded-lg ${selectedSize ? "bg-[#2F6B4F] text-white" : "bg-gray-300 text-gray-500"}`}
               >
                 Add to Cart
               </button>
@@ -260,7 +228,7 @@ const ProductDetail = () => {
               <button
                 disabled={wishlistLoading}
                 onClick={handleToggleWishlist}
-                className="px-4 py-3 cursor-pointer bg-[#2F6B4F] text-white rounded-lg"
+                className="px-4 py-3 bg-[#2F6B4F] text-white rounded-lg"
               >
                 <Heart />
               </button>
@@ -272,7 +240,7 @@ const ProductDetail = () => {
       </section>
 
       {toast && (
-        <div className="fixed top-5 right-5 z-50 animate-toast-in">
+        <div className="fixed top-5 right-5 z-50">
           <Toast message={toast.message} type={toast.type} />
         </div>
       )}

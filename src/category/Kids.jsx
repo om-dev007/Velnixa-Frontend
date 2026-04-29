@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Helmet } from "react-helmet-async";
 import kidsSale from '../assets/kidsSale.jpg'
 import Navbar from '../components/Navbar'
 import Cards from '../components/Cards'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
-import axios from 'axios';
 import Loader from '../components/Loader';
 import ErrorState from '../components/ErrorState';
+import { getKidsProducts } from '../api/product.api';
 
 const Kids = () => {
 
@@ -20,8 +20,9 @@ const Kids = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("https://velnixa-backend.vercel.app/products/kids");
-      setProducts(res.data.product);
+      const res = await getKidsProducts()
+      const {data} = res.data;
+      setProducts(data);
 
     } catch (err) {
       console.log(err);

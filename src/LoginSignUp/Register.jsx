@@ -4,8 +4,8 @@ import Toast from "../components/Toast";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
+import { registerUser } from "../api/auth.api";
 
 const Register = () => {
 
@@ -23,9 +23,7 @@ const Register = () => {
     const [toasts, setToasts] = useState([]);
 
     const showToast = (message, type) => {
-
         const id = Date.now();
-
         setToasts((prev) => [...prev, { id, message, type }]);
 
         setTimeout(() => {
@@ -40,10 +38,7 @@ const Register = () => {
     useEffect(() => {
         if (user) {
             showToast("Please logout first before creating another account", "error");
-
-            setTimeout(() => {
-                navigate("/user");
-            }, 1500);
+            setTimeout(() => navigate("/user"), 1500);
         }
     }, [user]);
 
@@ -60,12 +55,14 @@ const Register = () => {
 
             setLoading(true);
 
-            const res = await axios.post(
-                "https://velnixa-backend.vercel.app/api/auth/register",
-                input
-            );
+            const res = await registerUser(input);
+            const { success, message } = res.data;
 
-            showToast(res.data.message || "Account Created!", "success");
+            if (!success) {
+                throw new Error(message);
+            }
+
+            showToast(message || "Account Created!", "success");
 
             setInput({
                 name: "",
@@ -73,23 +70,14 @@ const Register = () => {
                 password: "",
             });
 
-            if (res.status === 201) {
-                setTimeout(() => {
-                    navigate("/login");
-                }, 2000);
-            }
+            setTimeout(() => {
+                navigate("/login");
+            }, 2000);
 
         } catch (error) {
-
-            showToast(
-                error.response?.data?.message || "Registration Failed",
-                "error"
-            );
-
+            showToast(error.message || "Registration Failed", "error");
         } finally {
-
             setLoading(false);
-
         }
     };
 
@@ -97,17 +85,13 @@ const Register = () => {
         <>
             <Helmet>
                 <title>Register | Velnixa</title>
-                <meta name="robots" content="noindex, nofollow" />
             </Helmet>
 
             <Navbar />
 
             <div className="min-h-[80vh] bg-linear-to-b from-green-50 to-white flex items-center justify-center px-4">
 
-                <form
-                    onSubmit={formHandler}
-                    className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-black/5 px-6 py-8 sm:px-10 sm:py-10"
-                >
+                <form onSubmit={formHandler} className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-black/5 px-6 py-8 sm:px-10 sm:py-10">
 
                     <h1 className="text-3xl font-semibold text-center text-[#1F3D2B] mb-8">
                         Register
@@ -115,48 +99,19 @@ const Register = () => {
 
                     <div className="space-y-6">
 
-                        <input
-                            type="text"
-                            name="name"
-                            value={input.name}
-                            onChange={commonHandler}
-                            placeholder="Full Name"
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]"
-                        />
+                        <input type="text" name="name" value={input.name} onChange={commonHandler} placeholder="Full Name" className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]" />
 
-                        <input
-                            type="email"
-                            name="email"
-                            value={input.email}
-                            onChange={commonHandler}
-                            placeholder="Email Address"
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]"
-                        />
+                        <input type="email" name="email" value={input.email} onChange={commonHandler} placeholder="Email Address" className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]" />
 
-                        <input
-                            type="password"
-                            name="password"
-                            value={input.password}
-                            onChange={commonHandler}
-                            placeholder="Password"
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]"
-                        />
+                        <input type="password" name="password" value={input.password} onChange={commonHandler} placeholder="Password" className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]" />
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium hover:bg-[#24563F] transition-all cursor-pointer"
-                        >
+                        <button type="submit" disabled={loading} className="w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium">
                             {loading ? "Creating..." : "Register"}
                         </button>
 
-                        {/* ✅ Login link added */}
                         <p className="text-sm text-center text-gray-500 mt-2">
                             Already have an account?{" "}
-                            <Link
-                                to="/login"
-                                className="text-[#2F6B4F] font-medium hover:underline"
-                            >
+                            <Link to="/login" className="text-[#2F6B4F] font-medium">
                                 Login
                             </Link>
                         </p>
@@ -167,16 +122,7 @@ const Register = () => {
 
                 <div className="fixed top-5 right-5 flex flex-col gap-3 z-50">
                     {toasts.map((t) => (
-                        <Toast
-                            key={t.id}
-                            message={t.message}
-                            type={t.type}
-                            onClose={() =>
-                                setToasts((prev) =>
-                                    prev.filter((toast) => toast.id !== t.id)
-                                )
-                            }
-                        />
+                        <Toast key={t.id} message={t.message} type={t.type} />
                     ))}
                 </div>
 

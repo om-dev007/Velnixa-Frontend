@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";        // ✅ added
+import { getCart, deleteCartItem, updateCart } from "../api/cart.api";
 import ErrorState from "../components/ErrorState"; // ✅ added
 
 const Cart = () => {
@@ -20,43 +21,29 @@ const Cart = () => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("https://velnixa-backend.vercel.app/cart/get", {
-        method: "GET",
-        credentials: "include",
-      });
+      const res = await getCart();
+      const { success, data } = res.data;
 
-      const data = await res.json();
+      if (!success) throw new Error();
 
-      if (!res.ok) {
-        throw new Error(data.message);
-      }
+      const formattedItems = data.items.map(item => ({
+        id: item.productId._id,
+        title: item.productId.name,
+        image: item.productId.image,
+        price: item.price,
+        quantity: item.quantity,
+        size: item.size || "M",
+      }));
 
-      if (data.success) {
-        const formattedItems = data.cart.items.map(item => ({
-          id: item.productId._id,
-          title: item.productId.name,
-          image: item.productId.image,
-          price: item.price,
-          quantity: item.quantity,
-          size: item.size || "M",
-        }));
+      setCartItems(formattedItems);
 
-        setCartItems(formattedItems);
-      }
-
-    } catch (error) {
-      console.log(error);
-
-      if (!navigator.onLine) {
-        setError("No internet connection 🚫");
-      } else {
-        setError("Unable to load cart 😕");
-      }
-
+    } catch {
+      setError(!navigator.onLine ? "No internet connection 🚫" : "Unable to load cart 😕");
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchCart();
@@ -68,12 +55,9 @@ const Cart = () => {
     );
 
     try {
-      await fetch(`https://velnixa-backend.vercel.app/cart/delete/${productId}/${size}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-    } catch (error) {
-      console.log(error);
+      await deleteCartItem(productId, size);
+    } catch (err) {
+      console.log(err)
     }
   };
 
@@ -83,10 +67,7 @@ const Cart = () => {
         if (item.id === productId && item.size === size) {
           return {
             ...item,
-            quantity:
-              action === "increase"
-                ? item.quantity + 1
-                : item.quantity - 1,
+            quantity: action === "increase" ? item.quantity + 1 : item.quantity - 1,
           };
         }
         return item;
@@ -94,14 +75,9 @@ const Cart = () => {
     );
 
     try {
-      await fetch("https://velnixa-backend.vercel.app/cart/update", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ productId, action, size }),
-      });
-    } catch (error) {
-      console.log(error);
+      await updateCart({ productId, action, size });
+    } catch (err) {
+      console.log(err)
     }
   };
 

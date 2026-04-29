@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Toast from "../components/Toast";
 import Loader from "../components/Loader";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 

@@ -1,7 +1,7 @@
 import Cards from '../components/Cards'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { getPopularProducts } from '../api/product.api'
 import Loader from '../components/Loader'
 import ErrorState from '../components/ErrorState'
 
@@ -16,8 +16,9 @@ const NewCollection = () => {
       setLoading(true)
       setError(null)
 
-      const res = await axios.get("https://velnixa-backend.vercel.app/products/popular")
-      setProducts(res.data.product)
+      const res = await getPopularProducts()
+      const {data} = res.data
+      setProducts(data)
 
     } catch (err) {
       console.log(err)

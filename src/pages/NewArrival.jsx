@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Cards from "../components/Cards";
 import Loader from "../components/Loader";
 import ErrorState from "../components/ErrorState";
+import { getNewArrivals } from "../api/product.api";
 
 const NewArrival = () => {
   const [products, setProducts] = useState([]);
@@ -18,11 +18,9 @@ const NewArrival = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        "https://velnixa-backend.vercel.app/products/new-arrivals"
-      );
-
-      setProducts(res.data.products);
+      const res = await getNewArrivals()
+      const {data} = res.data
+      setProducts(data);
 
     } catch (err) {
       console.log(err);
