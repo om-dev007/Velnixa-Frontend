@@ -18,8 +18,7 @@ const NewArrival = () => {
       setLoading(true);
       setError(null);
 
-      const res = await getNewArrivals()
-      const {data} = res.data
+      const data = await getNewArrivals()
       setProducts(data);
 
     } catch (err) {

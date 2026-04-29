@@ -16,8 +16,7 @@ const NewCollection = () => {
       setLoading(true)
       setError(null)
 
-      const res = await getPopularProducts()
-      const {data} = res.data
+      const data = await getPopularProducts()
       setProducts(data)
 
     } catch (err) {

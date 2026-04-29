@@ -1,27 +1,27 @@
 import { API } from "./client";
 
-export const getAllProducts = () => API.get("/products");
+const extractData = (res) => {
+  const data = res?.data?.data;
+  return Array.isArray(data) ? data : [];
+};
 
-export const getProductById = (id) =>
-  API.get(`/products/${id}`);
+export const getAllProducts = async () =>
+  extractData(await API.get("/products"));
 
-export const getPopularProducts = () =>
-  API.get("/products/popular");
+export const getPopularProducts = async () =>
+  extractData(await API.get("/products/popular"));
 
-export const getDataProducts = () =>
-  API.get("/products/data")
+export const getDataProducts = async () =>
+  extractData(await API.get("/products/data"));
 
-export const getMenProducts = () =>
-  API.get("/products/men");
+export const getMenProducts = async () =>
+  extractData(await API.get("/products/men"));
 
-export const getWomenProducts = () =>
-  API.get("/products/women");
+export const getWomenProducts = async () =>
+  extractData(await API.get("/products/women"));
 
-export const getKidsProducts = () =>
-  API.get("/products/kids");
+export const getKidsProducts = async () =>
+  extractData(await API.get("/products/kids"));
 
-export const getNewArrivals = () =>
-  API.get("/products/new-arrivals");
-
-export const filterProducts = (category) =>
-  API.get(`/products/filter?category=${category}`);
+export const getNewArrivals = async () =>
+  extractData(await API.get("/products/new-arrivals"));

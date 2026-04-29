@@ -20,8 +20,7 @@ const Men = () => {
       setLoading(true);
       setError(null);
 
-      const res = await getMenProducts()
-      const {data} = res.data;
+      const data = await getMenProducts()
       setProducts(data);
 
     } catch (err) {

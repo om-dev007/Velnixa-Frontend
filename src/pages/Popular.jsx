@@ -16,8 +16,7 @@ const Popular = () => {
             setLoading(true);
             setError(null);
 
-            const res = await getDataProducts()
-            const {data} = res.data;
+            const data = await getDataProducts()
             setProducts(data);
 
         } catch (err) {

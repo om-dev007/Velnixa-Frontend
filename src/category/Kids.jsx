@@ -20,8 +20,8 @@ const Kids = () => {
       setLoading(true);
       setError(null);
 
-      const res = await getKidsProducts()
-      const {data} = res.data;
+      const data = await getKidsProducts();
+
       setProducts(data);
 
     } catch (err) {
@@ -71,9 +71,9 @@ const Kids = () => {
         {loading && <Loader text="Loading kids collection..." />}
 
         {!loading && error && (
-          <ErrorState 
-            message={error} 
-            onRetry={fetchProducts} 
+          <ErrorState
+            message={error}
+            onRetry={fetchProducts}
           />
         )}
 
