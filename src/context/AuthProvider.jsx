@@ -11,11 +11,14 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
         try {
             const res = await getProfile();
-            const { success, data } = res.data;
+
+            const success = res?.data?.success;
+            const data = res?.data?.data;
 
             if (!success) throw new Error();
 
-            setUser(data);
+            setUser(data || null);
+
         } catch {
             setUser(null);
         } finally {
@@ -30,9 +33,10 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const res = await loginUser(credentials);
-            const { success, message } = res.data;
+            const success = res?.data?.success;
+            const message = res?.data?.message;
 
-            if (!success) throw new Error(message);
+            if (!success) throw new Error(message || "Login failed");
 
             await checkAuth();
 
@@ -46,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await logoutUser();
             setUser(null);
-        } catch(error) {
+        } catch (error) {
             console.log(error)
         }
     };

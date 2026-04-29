@@ -6,15 +6,29 @@ import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";        // ✅ added
 import { getCart, deleteCartItem, updateCart } from "../api/cart.api";
-import ErrorState from "../components/ErrorState"; // ✅ added
+import ErrorState from "../components/ErrorState";
+import { useAuth } from "../context/useAuth";
+import Toast from "../components/Toast";
 
 const Cart = () => {
 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // ✅ added
+  const [error, setError] = useState(null);
+  const { user, loading: authLoading } = useAuth();
+  const [toast, setToast] = useState(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setToast({ message: "Please login first 🔐", type: "error" });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    }
+  }, [authLoading, user]);
 
   const fetchCart = async () => {
     try {
@@ -22,23 +36,30 @@ const Cart = () => {
       setError(null);
 
       const res = await getCart();
-      const { success, data } = res.data;
 
-      if (!success) throw new Error();
+      if (!res.success) {
+        throw new Error(res.message);
+      }
 
-      const formattedItems = data.items.map(item => ({
-        id: item.productId._id,
-        title: item.productId.name,
-        image: item.productId.image,
-        price: item.price,
-        quantity: item.quantity,
-        size: item.size || "M",
+      const items = res.data?.items || [];
+
+      const formattedItems = items.map(item => ({
+        id: item?.productId?._id,
+        title: item?.productId?.name,
+        image: item?.productId?.image,
+        price: item?.price,
+        quantity: item?.quantity,
+        size: item?.size || "M",
       }));
 
       setCartItems(formattedItems);
 
-    } catch {
-      setError(!navigator.onLine ? "No internet connection 🚫" : "Unable to load cart 😕");
+    } catch (err) {
+      setError(
+        !navigator.onLine
+          ? "No internet connection 🚫"
+          : err.message || "Unable to load cart 😕"
+      );
     } finally {
       setLoading(false);
     }
@@ -46,8 +67,10 @@ const Cart = () => {
 
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (user) {
+      fetchCart();
+    }
+  }, [user]);
 
   const handleRemove = async (productId, size) => {
     setCartItems(prev =>
@@ -55,7 +78,8 @@ const Cart = () => {
     );
 
     try {
-      await deleteCartItem(productId, size);
+      const res = await deleteCartItem(productId, size);
+      if (!res.success) console.log(res.message);
     } catch (err) {
       console.log(err)
     }
@@ -75,7 +99,8 @@ const Cart = () => {
     );
 
     try {
-      await updateCart({ productId, action, size });
+      const res = await updateCart({ productId, action, size });
+      if (!res.success) console.log(res.message);
     } catch (err) {
       console.log(err)
     }
@@ -86,7 +111,6 @@ const Cart = () => {
     0
   );
 
-  // 🔥 LOADING (only replaced UI)
   if (loading) {
     return (
       <>
@@ -97,7 +121,6 @@ const Cart = () => {
     );
   }
 
-  // 🔥 ERROR (added)
   if (error) {
     return (
       <>
@@ -122,7 +145,7 @@ const Cart = () => {
           Your Shopping Cart
         </h1>
 
-        {cartItems.length === 0 ? (
+        {(cartItems?.length || 0) === 0 ? (
           <div className="text-center mt-20">
             <p className="text-gray-500 mb-6">
               Your cart is currently empty
@@ -230,7 +253,11 @@ const Cart = () => {
           </div>
         )}
       </section>
-
+      {toast && (
+        <div className="fixed top-5 right-5 z-50">
+          <Toast message={toast.message} type={toast.type} />
+        </div>
+      )}
       <Footer />
     </>
   );

@@ -29,11 +29,10 @@ const ProductDetail = () => {
 
     const fetchProduct = async () => {
       try {
-        const res = await getProductById(id);
-        const { success, data, message } = res.data;
+        const data = await getProductById(id);
 
-        if (!success) {
-          throw new Error(message);
+        if (!data) {
+          throw new Error("Product not found");
         }
 
         setProduct(data);
@@ -70,10 +69,8 @@ const ProductDetail = () => {
         size: selectedSize,
       });
 
-      const { success, message } = res.data;
-
-      if (!success) {
-        throw new Error(message);
+      if (!res.success) {
+        throw new Error(res.message);
       }
 
       setToast({ message: "Added to cart ✅", type: "success" });
@@ -96,13 +93,11 @@ const ProductDetail = () => {
     try {
 
       const res = await toggleWishlist(product._id);
-      const { success, message } = res.data;
-
-      if (!success) {
-        throw new Error(message);
+      if (!res.success) {
+        throw new Error(res.message);
       }
 
-      setToast({ message, type: "success" });
+      setToast({ message: res.message, type: "success" });
 
     } catch (error) {
       setToast({

@@ -60,7 +60,10 @@ const Login = () => {
 
         } catch (error) {
 
-            showToast(error.message || "Login Failed", "error");
+            showToast(
+                error?.response?.data?.message || error.message || "Login Failed",
+                "error"
+            );
 
         } finally {
             setLoading(false);

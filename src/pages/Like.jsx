@@ -8,13 +8,27 @@ import Loader from "../components/Loader";        // ✅ added
 import ErrorState from "../components/ErrorState"; // ✅ added
 import { getWishlist, removeFromWish } from "../api/wishlist.api";
 import { addToCart } from "../api/cart.api";
+import { useAuth } from "../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Like = () => {
 
   const [wishlist, setWishlist] = useState([]);
   const [toast, setToast] = useState(null);
-  const [loading, setLoading] = useState(true);   // ✅ added
-  const [error, setError] = useState(null);       // ✅ added
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setToast({ message: "Please login first 🔐", type: "error" });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    }
+  }, [authLoading, user]);
 
   const fetchWishlist = async () => {
     try {
@@ -22,15 +36,18 @@ const Like = () => {
       setError(null);
 
       const res = await getWishlist();
-      const { success, data } = res.data;
 
-      if (!success) throw new Error();
+      if (!res.success) {
+        throw new Error(res.message);
+      }
 
-      const formatted = data.items.map(item => ({
-        id: item.productId._id,
-        title: item.productId.name,
-        price: item.productId.price,
-        image: item.productId.image,
+      const items = res.data?.items || [];
+
+      const formatted = items.map(item => ({
+        id: item?.productId?._id,
+        title: item?.productId?.name,
+        price: item?.productId?.price,
+        image: item?.productId?.image,
       }));
 
       setWishlist(formatted);
@@ -43,8 +60,10 @@ const Like = () => {
   };
 
   useEffect(() => {
-    fetchWishlist();
-  }, []);
+    if (user) {
+      fetchWishlist();
+    }
+  }, [user]);
 
   const removeFromWishlist = async (productId) => {
     try {
@@ -109,14 +128,14 @@ const Like = () => {
           Your Wishlist
         </h1>
 
-        {wishlist.length === 0 ? (
+        {(wishlist?.length || 0) === 0 ? (
           <p className="text-center text-gray-500">
             No liked products yet
           </p>
         ) : (
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-            {wishlist.map((item) => (
+            {(wishlist || []).map((item) => (
               <div
                 key={item.id}
                 className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-lg transition duration-300 flex gap-4 items-center"

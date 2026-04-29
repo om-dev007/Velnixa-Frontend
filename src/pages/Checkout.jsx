@@ -6,12 +6,21 @@ import { Helmet } from "react-helmet-async";
 import Loader from "../components/Loader";
 import ErrorState from "../components/ErrorState";
 import { getCart } from "../api/cart.api";
+import { useAuth } from "../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/login");
+    }
+  }, [authLoading, user]);
 
   const [paymentMethod, setPaymentMethod] = useState("");
 
@@ -21,21 +30,28 @@ const Checkout = () => {
       setError(null);
 
       const res = await getCart();
-      const { success, data } = res.data;
 
-      if (!success) throw new Error();
+      if (!res.success) {
+        throw new Error(res.message);
+      }
 
-      const formattedItems = data.items.map(item => ({
-        id: item.productId._id,
-        title: item.productId.name,
-        price: item.price,
-        quantity: item.quantity,
+      const items = res.data?.items || [];
+
+      const formattedItems = items.map(item => ({
+        id: item?.productId?._id,
+        title: item?.productId?.name,
+        price: item?.price,
+        quantity: item?.quantity,
       }));
 
       setCartItems(formattedItems);
 
-    } catch {
-      setError(!navigator.onLine ? "No internet connection 🚫" : "Unable to load checkout 😕");
+    } catch (err) {
+      setError(
+        !navigator.onLine
+          ? "No internet connection 🚫"
+          : err.message || "Unable to load checkout 😕"
+      );
     } finally {
       setLoading(false);
     }
@@ -94,9 +110,9 @@ const Checkout = () => {
               </h2>
 
               <div className="space-y-4">
-                {cartItems.map((item, index) => (
+                {(cartItems || []).map((item, index) => (
                   <div
-                    key={`${item._id}-${item.size}-${index}`}
+                    key={`${item.id}-${index}`}
                     className="flex justify-between items-center text-sm text-gray-700"
                   >
                     <div>
