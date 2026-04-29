@@ -5,6 +5,9 @@ const extractData = (res) => {
   return Array.isArray(data) ? data : [];
 };
 
+export const getProductById = async (id) =>
+  extractData(await API.get(`/products/${id}`))
+
 export const getAllProducts = async () =>
   extractData(await API.get("/products"));
 
