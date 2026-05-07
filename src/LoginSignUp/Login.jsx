@@ -126,7 +126,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium"
+                            className="w-full mt-4 bg-[#2F6B4F] cursor-pointer text-white py-3 rounded-lg font-medium"
                         >
                             {loading ? "Logging in..." : "Login"}
                         </button>

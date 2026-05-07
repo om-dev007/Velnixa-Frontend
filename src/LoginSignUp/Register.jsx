@@ -105,7 +105,7 @@ const Register = () => {
 
                         <input type="password" name="password" value={input.password} onChange={commonHandler} placeholder="Password" className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]" />
 
-                        <button type="submit" disabled={loading} className="w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium">
+                        <button type="submit" disabled={loading} className="cursor-pointer w-full mt-4 bg-[#2F6B4F] text-white py-3 rounded-lg font-medium">
                             {loading ? "Creating..." : "Register"}
                         </button>
 

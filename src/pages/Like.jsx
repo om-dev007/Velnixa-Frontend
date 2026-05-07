@@ -97,7 +97,6 @@ const Like = () => {
     }
   };
 
-  // 🔥 LOADING
   if (loading) {
     return (
       <>
@@ -108,7 +107,6 @@ const Like = () => {
     );
   }
 
-  // 🔥 ERROR
   if (error) {
     return (
       <>
@@ -176,7 +174,7 @@ const Like = () => {
 
                     <button
                       onClick={() => handleAddToCart(item.id)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg
+                      className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg
                       bg-[#2F6B4F] hover:bg-[#24563F] text-white text-sm transition"
                     >
                       <ShoppingCart size={16} />
@@ -185,7 +183,7 @@ const Like = () => {
 
                     <button
                       onClick={() => removeFromWishlist(item.id)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg
+                      className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg
                       bg-red-50 hover:bg-red-100 text-red-600 text-sm transition"
                     >
                       <Trash2 size={16} />
