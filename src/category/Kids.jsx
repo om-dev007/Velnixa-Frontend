@@ -66,7 +66,7 @@ const Kids = () => {
         <h1 className="sr-only">Kids Clothing Collection at Velnixa</h1>
       </div>
 
-      <div className="bg-[#FAF8F5] min-h-[60vh] flex items-center justify-center">
+      <div className="bg-[#FAF8F5] py-10 px-5 sm:px-10 min-h-[60vh] flex items-center justify-center">
 
         {loading && <Loader text="Loading kids collection..." />}
 

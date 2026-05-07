@@ -66,7 +66,7 @@ const Women = () => {
 
       <h1 className="sr-only">Women Clothing Collection at Velnixa</h1>
 
-      <div className="bg-[#FAF8F5] min-h-[60vh] flex items-center justify-center">
+      <div className="bg-[#FAF8F5] py-10 px-5 sm:px-10 min-h-[60vh] flex items-center justify-center">
 
         {loading && <Loader text="Loading women's collection..." />}
 

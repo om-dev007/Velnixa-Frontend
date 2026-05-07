@@ -59,7 +59,7 @@ const NewCollection = () => {
   }
 
   return (
-    <div className='pt-10 bg-[#FAF8F5] '>
+    <div className='pt-10 py-10 px-5 sm:px-10 bg-[#FAF8F5] '>
       <div className='text-center'>
         <h1 className='text-3xl text-gray-800'>NEW OFFERS</h1>
       </div>
