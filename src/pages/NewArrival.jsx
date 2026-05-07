@@ -54,9 +54,9 @@ const NewArrival = () => {
       {loading && <Loader text="Loading new arrivals..." />}
 
       {!loading && error && (
-        <ErrorState 
-          message={error} 
-          onRetry={fetchProducts} 
+        <ErrorState
+          message={error}
+          onRetry={fetchProducts}
         />
       )}
 
@@ -69,23 +69,33 @@ const NewArrival = () => {
       )}
 
       {!loading && !error && products.length > 0 && (
-        <section className="bg-[#FAF8F5] px-5 sm:px-10 md:px-16 py-10 sm:py-14">
-          <div className="text-center mb-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1F3D2B]">
-              New Arrivals
-            </h1>
-            <p className="mt-2 text-gray-600 text-sm sm:text-base">
-              Fresh styles just landed at Velnixa
-            </p>
+        <section className="bg-[#FAF8F5] py-6 px-3 sm:px-5 md:px-8 lg:px-10 min-h-[60vh] flex items-center justify-center">
+
+          <div className="w-full">
+
+            <div className="text-center mb-8 sm:mb-10">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1F3D2B]">
+                New Arrivals
+              </h1>
+
+              <p className="mt-2 text-gray-600 text-sm sm:text-base">
+                Fresh styles just landed at Velnixa
+              </p>
+            </div>
+
+            <div
+              className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5
+                 gap-4 sm:gap-5 px-8 sm:px-10 md:px-16 lg:px-20"
+            >
+              {products.map((item) => (
+                <Link key={`${item._id}`} to={`/products/${item._id}`}>
+                  <Cards data={item} />
+                </Link>
+              ))}
+            </div>
+
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-            {products.map((item) => (
-              <Link key={`${item._id}`} to={`/products/${item._id}`}>
-                <Cards data={item} />
-              </Link>
-            ))}
-          </div>
         </section>
       )}
 

@@ -85,7 +85,7 @@ const Women = () => {
 
         {!loading && !error && products.length > 0 && (
           <div className='w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 
-                          gap-x-5 gap-y-5 py-10 px-8 sm:px-10 md:px-16 lg:px-20'>
+                          gap-x-5 gap-y-5 px-8 sm:px-10 md:px-16 lg:px-20'>
 
             {products.map((items) => (
               <Link
