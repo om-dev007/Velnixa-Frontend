@@ -23,8 +23,7 @@ const Men = () => {
       const data = await getMenProducts()
       setProducts(data);
 
-    } catch (err) {
-      console.log(err);
+    } catch {
 
       if (!navigator.onLine) {
         setError("No internet connection 🚫");

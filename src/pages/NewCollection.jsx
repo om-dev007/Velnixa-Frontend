@@ -19,8 +19,7 @@ const NewCollection = () => {
       const data = await getPopularProducts()
       setProducts(data)
 
-    } catch (err) {
-      console.log(err)
+    } catch {
 
       if (!navigator.onLine) {
         setError("No internet connection 🚫")

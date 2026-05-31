@@ -4,7 +4,7 @@ export const getProfile = () =>
   API.get("/user");
 
 export const updateUser = (id, data) =>
-  API.post(`/user/update/${id}`, data);
+  API.patch(`/user/${id}`, data);
 
 export const deleteUser = (id) =>
-  API.delete(`/user/delete/${id}`); 
+  API.delete(`/user/${id}`); 

@@ -1,63 +1,106 @@
 import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { getProfile } from "../api/user.api";
-import { loginUser, logoutUser } from "../api/auth.api";
+import {
+  loginUser,
+  logoutUser,
+} from "../api/auth.api";
 
 export const AuthProvider = ({ children }) => {
 
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const checkAuth = async () => {
-        try {
-            const res = await getProfile();
+  const checkAuth = async () => {
 
-            const success = res?.data?.success;
-            const data = res?.data?.data;
+    try {
 
-            if (!success) throw new Error();
+      const res = await getProfile();
 
-            setUser(data || null);
+      setUser(res.data.data);
 
-        } catch {
-            setUser(null);
-        } finally {
-            setLoading(false);
-        }
-    };
+    } catch {
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
+      localStorage.removeItem("accessToken");
 
-    const login = async (credentials) => {
-        try {
-            const res = await loginUser(credentials);
-            const success = res?.data?.success;
-            const message = res?.data?.message;
+      setUser(null);
 
-            if (!success) throw new Error(message || "Login failed");
+    } finally {
 
-            await checkAuth();
+      setLoading(false);
 
-            return { success: true, message };
-        } catch (error) {
-            return { success: false, message: error.message };
-        }
-    };
+    }
+  };
 
-    const logout = async () => {
-        try {
-            await logoutUser();
-            setUser(null);
-        } catch (error) {
-            console.log(error)
-        }
-    };
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const login = async (credentials) => {
+
+    try {
+
+      const res =
+        await loginUser(credentials);
+
+      if (!res.data.success) {
+        throw new Error(
+          res.data.message
+        );
+      }
+
+      localStorage.setItem(
+        "accessToken",
+        res.data.data.accessToken
+      );
+
+      await checkAuth();
+
+      return {
+        success: true,
+        message: res.data.message,
+      };
+
+    } catch (error) {
+
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  };
+
+  const logout = async () => {
+
+    try {
+
+      await logoutUser();
+
+      localStorage.removeItem(
+        "accessToken"
+      );
+
+      setUser(null);
+
+    } catch (error) {
+
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };

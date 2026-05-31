@@ -83,9 +83,17 @@ const Cart = () => {
 
     try {
       const res = await deleteCartItem(productId, size);
-      if (!res.success) console.log(res.message);
+      if (!res.success) {
+        return {
+        success: false,
+        message: res.message,
+      };
+      }
     } catch (err) {
-      console.log(err)
+      return {
+        success: false,
+        message: err.message,
+      };
     }
   };
 
@@ -104,9 +112,17 @@ const Cart = () => {
 
     try {
       const res = await updateCart({ productId, action, size });
-      if (!res.success) console.log(res.message);
+      if (!res.success) {
+        return {
+        success: false,
+        message: res.message,
+      };
+      }
     } catch (err) {
-      console.log(err)
+      return {
+        success: false,
+        message: err.message,
+      };
     }
   };
 

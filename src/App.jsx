@@ -17,6 +17,7 @@ import Like from "./pages/Like"
 import Checkout from "./pages/Checkout"
 import Contact from "./pages/Contact"
 import Dashboard from "./pages/Dashboard"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 const isMaintenance = import.meta.env.VITE_MAINTENANCE === "true";
 
@@ -32,7 +33,7 @@ const App = () => {
       </div>
     );
   }
-  
+
 
   return (
     <div className='bg-white min-h-screen text-black'>
@@ -41,8 +42,15 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register/>} />
-        <Route path="/user" element={<Dashboard/>} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/about" element={<About />} />
         <Route path="/mens" element={<Men />} />
         <Route path="/womens" element={<Women />} />
@@ -52,9 +60,9 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/like" element={<Like />} />
         <Route path="/offices" element={<Offices />} />
-        <Route path="/new-arrivals" element={<NewArrival/>} />
+        <Route path="/new-arrivals" element={<NewArrival />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/contact" element={<Contact/>} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </div>
   )

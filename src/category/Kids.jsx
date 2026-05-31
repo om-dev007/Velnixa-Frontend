@@ -24,8 +24,7 @@ const Kids = () => {
 
       setProducts(data);
 
-    } catch (err) {
-      console.log(err);
+    } catch {
 
       if (!navigator.onLine) {
         setError("No internet connection 🚫");
