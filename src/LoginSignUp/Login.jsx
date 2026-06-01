@@ -80,18 +80,18 @@ const Login = () => {
 
             <Navbar />
 
-            <div className="min-h-[80vh] bg-linear-to-b from-green-50 to-white flex items-center justify-center px-4">
+            <div className="min-h-[80vh] bg-linear-to-b from-green-50 to-white flex items-center justify-center px-4 py-8 sm:py-12">
 
                 <form
                     onSubmit={formHandler}
                     className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-black/5 px-6 py-8 sm:px-10 sm:py-10"
                 >
 
-                    <h1 className="text-3xl font-semibold text-center text-[#1F3D2B] mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-semibold text-center text-[#1F3D2B] mb-6 sm:mb-8">
                         Login
                     </h1>
 
-                    <div className="space-y-6">
+                    <div className="space-y-5 sm:space-y-6">
 
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-medium text-[#4B5B52]">
@@ -123,18 +123,28 @@ const Login = () => {
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#2F6B4F]"
                             />
 
+                            {/* Forgot Password Link - Added Here */}
+                            <div className="text-right mt-1">
+                                <Link 
+                                    to="/forgot-password" 
+                                    className="text-xs sm:text-sm text-[#2F6B4F] hover:text-[#24563F] font-medium transition-colors"
+                                >
+                                    Forgot Password?
+                                </Link>
+                            </div>
+
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full mt-4 bg-[#2F6B4F] cursor-pointer text-white py-3 rounded-lg font-medium"
+                            className="w-full mt-2 bg-[#2F6B4F] cursor-pointer text-white py-3 rounded-lg font-medium hover:bg-[#24563F] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? "Logging in..." : "Login"}
                         </button>
 
                         <p className="text-sm text-center text-gray-500">
-                            Don’t have an account?{" "}
+                            Don't have an account?{" "}
                             <Link to="/register" className="text-[#2F6B4F] font-medium">
                                 Register
                             </Link>

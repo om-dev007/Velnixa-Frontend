@@ -17,6 +17,8 @@ import Like from "./pages/Like"
 import Checkout from "./pages/Checkout"
 import Contact from "./pages/Contact"
 import Dashboard from "./pages/Dashboard"
+import ForgotPassword from "./components/ForgotPassword"
+import ProfileSettings from "./pages/ProfileSettings"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 const isMaintenance = import.meta.env.VITE_MAINTENANCE === "true";
@@ -52,6 +54,7 @@ const App = () => {
           }
         />
         <Route path="/about" element={<About />} />
+        <Route path="/profile" element={<ProfileSettings />} />
         <Route path="/mens" element={<Men />} />
         <Route path="/womens" element={<Women />} />
         <Route path="/products/:id" element={<ProductDetail />} />
@@ -61,6 +64,7 @@ const App = () => {
         <Route path="/like" element={<Like />} />
         <Route path="/offices" element={<Offices />} />
         <Route path="/new-arrivals" element={<NewArrival />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>

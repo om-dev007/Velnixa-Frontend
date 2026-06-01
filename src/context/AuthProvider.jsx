@@ -43,6 +43,8 @@ export const AuthProvider = ({ children }) => {
       const res =
         await loginUser(credentials);
 
+        console.log("Response in authProvider.jsx: ", res);
+
       if (!res.data.success) {
         throw new Error(
           res.data.message
