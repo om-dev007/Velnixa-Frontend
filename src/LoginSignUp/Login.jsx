@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
 const Login = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectPath = location.state?.from || "/";
 
-    const { user, login } = useAuth();
-
-    useEffect(() => {
-        if (user) {
-            navigate("/user");
-        }
-    }, [user]);
+    const { login } = useAuth();
 
     const [input, setInput] = useState({
         email: "",
@@ -52,11 +48,17 @@ const Login = () => {
                 throw new Error(res.message);
             }
 
-            showToast(res.message || "Login Successful!", "success");
+            showToast(
+                res.message || "Login Successful!",
+                "success"
+            );
 
-            setTimeout(() => {
-                navigate("/user");
-            }, 1500);
+            navigate(
+                redirectPath,
+                {
+                    replace: true,
+                }
+            );
 
         } catch (error) {
 

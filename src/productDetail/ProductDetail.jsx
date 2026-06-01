@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -10,10 +10,14 @@ import ErrorState from "../components/ErrorState";
 import { getProductById } from "../api/product.api";
 import { addToCart } from "../api/cart.api";
 import { toggleWishlist } from "../api/wishlist.api";
+import { useAuth } from "../context/useAuth";
 
 const ProductDetail = () => {
 
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const location = useLocation();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,12 +58,38 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
 
-    if (!selectedSize) {
-      setToast({ message: "Please select size ❗", type: "error" });
+    if (!user) {
+
+      setToast({
+        message: "Please login first 🔐",
+        type: "error",
+      });
+
+      setTimeout(() => {
+        navigate("/login", {
+          state: {
+            from: location.pathname,
+          },
+        });
+      }, 1000);
+
       return;
     }
 
-    setToast({ message: "Adding to cart...", type: "success" });
+    if (!selectedSize) {
+
+      setToast({
+        message: "Please select size ❗",
+        type: "error",
+      });
+
+      return;
+    }
+
+    setToast({
+      message: "Adding to cart...",
+      type: "success",
+    });
 
     try {
 
@@ -73,18 +103,49 @@ const ProductDetail = () => {
         throw new Error(res.message);
       }
 
-      setToast({ message: "Added to cart ✅", type: "success" });
+      setToast({
+        message: "Added to cart ✅",
+        type: "success",
+      });
+
       setQuantity(1);
       setSelectedSize(null);
 
     } catch (error) {
-      setToast({ message: error.message || "Error ❌", type: "error" });
+
+      setToast({
+        message: error.message || "Error ❌",
+        type: "error",
+      });
+
     } finally {
-      setTimeout(() => setToast(null), 1500);
+
+      setTimeout(() => {
+        setToast(null);
+      }, 1500);
+
     }
   };
 
   const handleToggleWishlist = async () => {
+
+    if (!user) {
+
+      setToast({
+        message: "Please login first 🔐",
+        type: "error",
+      });
+
+      setTimeout(() => {
+        navigate("/login", {
+          state: {
+            from: location.pathname,
+          },
+        });
+      }, 1000);
+
+      return;
+    }
 
     if (!product?._id) return;
 
@@ -93,20 +154,32 @@ const ProductDetail = () => {
     try {
 
       const res = await toggleWishlist(product._id);
+
       if (!res.success) {
         throw new Error(res.message);
       }
 
-      setToast({ message: res.message, type: "success" });
+      setToast({
+        message: res.message,
+        type: "success",
+      });
 
     } catch (error) {
+
       setToast({
-        message: error.message || "Wishlist error ❌",
+        message:
+          error.message || "Wishlist error ❌",
         type: "error",
       });
+
     } finally {
+
       setWishlistLoading(false);
-      setTimeout(() => setToast(null), 1500);
+
+      setTimeout(() => {
+        setToast(null);
+      }, 1500);
+
     }
   };
 
@@ -212,10 +285,17 @@ const ProductDetail = () => {
             </div>
 
             <div className="flex gap-4 justify-center lg:justify-start">
+
               <button
                 disabled={!selectedSize}
                 onClick={handleAddToCart}
-                className={`px-6 py-3 rounded-lg ${selectedSize ? "bg-[#2F6B4F] text-white cursor-pointer" : "bg-gray-300 text-gray-500"}`}
+                className={`
+      px-6 py-3 rounded-lg font-medium transition
+      ${selectedSize
+                    ? "bg-[#2F6B4F] text-white hover:bg-[#24563F] cursor-pointer"
+                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  }
+    `}
               >
                 Add to Cart
               </button>
@@ -223,10 +303,9 @@ const ProductDetail = () => {
               <button
                 disabled={wishlistLoading}
                 onClick={handleToggleWishlist}
-                className="px-4 py-3 cursor-pointer bg-[#2F6B4F] text-white rounded-lg"
-              >
-                <Heart />
+                className="px-4 py-3 rounded-lg border border-[#2F6B4F] text-[#2F6B4F] hover:bg-[#2F6B4F] hover:text-white transition cursor-pointer"><Heart size={18} />
               </button>
+
             </div>
 
           </div>
