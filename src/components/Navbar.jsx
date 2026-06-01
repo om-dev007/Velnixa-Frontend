@@ -100,7 +100,7 @@ const Navbar = () => {
           ) : !user ? (
             <NavIcon to="/login" icon={<UserRound size={22} />} />
           ) : (
-            <NavIcon to="/dashboard" icon={<LayoutDashboard size={22} />} />
+            <NavIcon to="/user" icon={<LayoutDashboard size={22} />} />
           )}
 
           <NavIcon to="/cart" icon={<ShoppingCart size={22} />} />
