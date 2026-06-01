@@ -30,7 +30,7 @@ API.interceptors.response.use(
       error.response?.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.includes(
-        "/auth/access-token"
+        "/auth/rotate-token"
       )
     ) {
 
@@ -40,7 +40,7 @@ API.interceptors.response.use(
 
         const refreshResponse =
           await axios.post(
-            `${import.meta.env.VITE_API_URL}/auth/access-token`,
+            `${import.meta.env.VITE_API_URL}/auth/rotate-token`,
             {},
             {
               withCredentials: true,
