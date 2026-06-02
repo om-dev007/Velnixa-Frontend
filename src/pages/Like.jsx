@@ -42,7 +42,6 @@ const Like = () => {
       }
 
       const items = res.data?.items || [];
-      console.log("Items in wishlist: ", items);
 
       const formatted = items
         .filter(item => item?.productId)

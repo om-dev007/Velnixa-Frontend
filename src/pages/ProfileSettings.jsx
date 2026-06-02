@@ -41,7 +41,6 @@ const ProfileSettings = () => {
     }
 
     if (user) {
-        console.log("User in profile setting.jsx: ", user);
       setName(user.name || "");
       setEmail(user.email || "");
     }
