@@ -27,3 +27,9 @@ export const logoutFromAllDevices = () =>
 // Generate new access token
 export const generateNewToken = () =>
   API.post("/auth/rotate-token");
+
+export const forgotPassword = (data) =>
+  API.post("/auth/forgot-password", data);
+
+export const resetPassword = (data) =>
+  API.post("/auth/reset-password", data);
