@@ -17,11 +17,12 @@ const Checkout = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/login");
     }
-  }, [authLoading, user]);
+  }, [authLoading, user, navigate]);
 
   const [paymentMethod, setPaymentMethod] = useState("");
 
@@ -60,14 +61,17 @@ const Checkout = () => {
   };
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (user) {
+      fetchCart();
+    }
+  }, [user]);
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
+  // Loading state
   if (loading) {
     return (
       <>
@@ -78,6 +82,7 @@ const Checkout = () => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <>
@@ -88,6 +93,63 @@ const Checkout = () => {
     );
   }
 
+  // ✅ Empty cart state - User ko button dikhao, click kare tabhi redirect
+  if (cartItems.length === 0) {
+    return (
+      <>
+        <Helmet>
+          <title>Empty Cart | Velnixa</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+
+        <Navbar />
+
+        <section className="min-h-screen bg-[#FAF8F5] px-4 sm:px-6 md:px-8 lg:px-16 py-6 sm:py-8 md:py-10 lg:py-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm p-8 sm:p-10 md:p-12">
+              
+              {/* Empty Cart Icon */}
+              <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <svg 
+                  className="w-10 h-10 text-gray-400" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={1.5} 
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" 
+                  />
+                </svg>
+              </div>
+
+              <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+                Your cart is empty!
+              </h2>
+              
+              <p className="text-gray-500 mb-8">
+                Looks like you haven't added anything to your cart yet.
+              </p>
+
+              <Link
+                to="/"
+                className="inline-block bg-[#2F6B4F] hover:bg-[#24563F] text-white px-8 py-3 rounded-xl text-sm font-medium transition-colors"
+              >
+                Continue Shopping 🛍️
+              </Link>
+
+            </div>
+          </div>
+        </section>
+
+        <Footer />
+      </>
+    );
+  }
+
+  // Main checkout view (with items)
   return (
     <>
       <Helmet>
@@ -106,18 +168,18 @@ const Checkout = () => {
 
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-6 md:p-8 lg:p-10">
 
+            {/* Order Summary */}
             <div className="mb-6 sm:mb-8 md:mb-10">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-5 md:mb-6">
-                Order Summary
+                Order Summary ({cartItems.length} {cartItems.length === 1 ? 'item' : 'items'})
               </h2>
 
               <div className="space-y-4 sm:space-y-5 md:space-y-6">
-                {(cartItems || []).map((item, index) => (
+                {cartItems.map((item, index) => (
                   <div
                     key={`${item.id}-${index}`}
                     className="flex items-center gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-gray-100 last:border-0"
                   >
-                    {/* Product Image */}
                     <Link to={`/products/${item.id}`} className="flex-shrink-0">
                       {item.image && (
                         <img
@@ -128,7 +190,6 @@ const Checkout = () => {
                       )}
                     </Link>
                     
-                    {/* Product Details */}
                     <div className="flex-1 min-w-0">
                       <Link to={`/products/${item.id}`} className="hover:text-[#2F6B4F] transition-colors">
                         <p className="font-medium text-sm sm:text-base text-gray-900 hover:text-[#2F6B4F] truncate">
@@ -140,7 +201,6 @@ const Checkout = () => {
                       </p>
                     </div>
 
-                    {/* Product Price - Always on right side */}
                     <p className="font-semibold text-sm sm:text-base text-gray-900 flex-shrink-0">
                       ${(item.price * item.quantity).toFixed(2)}
                     </p>
@@ -149,13 +209,13 @@ const Checkout = () => {
               </div>
             </div>
 
+            {/* Payment Method */}
             <div className="mb-6 sm:mb-8 md:mb-10">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-5 md:mb-6">
                 Payment Method
               </h2>
 
               <div className="space-y-3 sm:space-y-4">
-
                 <button
                   onClick={() => setPaymentMethod("upi")}
                   className={`w-full flex items-center cursor-pointer outline-0 gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all duration-200
@@ -194,10 +254,10 @@ const Checkout = () => {
                     Cash on Delivery
                   </span>
                 </button>
-
               </div>
             </div>
 
+            {/* Pricing Summary */}
             <div className="border-t pt-4 sm:pt-5 md:pt-6 space-y-2 sm:space-y-3 text-sm text-gray-700">
               <div className="flex justify-between text-sm sm:text-base">
                 <span>Subtotal</span>
@@ -215,9 +275,10 @@ const Checkout = () => {
               </div>
             </div>
 
+            {/* Checkout Button */}
             <button
               disabled={!paymentMethod}
-              className={`mt-6 sm:mt-8 md:mt-10 w-full py-3 sm:py-3.5 md:py-4 rounded-xl text-sm sm:text-base font-medium transition-all duration-200
+              className={`mt-6 sm:mt-8 md:mt-10 w-full  py-3 sm:py-3.5 md:py-4 rounded-xl text-sm sm:text-base font-medium transition-all duration-200
                 ${paymentMethod
                   ? "bg-[#2F6B4F] hover:bg-[#24563F] text-white cursor-pointer"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}

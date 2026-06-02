@@ -14,7 +14,7 @@ const handleError = (error) => ({
     error?.message ||
     "Something went wrong",
 });
-
+ 
 export const toggleWishlist = async (productId) => {
   try {
     const res = await API.post("/wishlist/toggle", { productId });

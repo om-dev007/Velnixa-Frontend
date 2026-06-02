@@ -7,6 +7,7 @@ import {
   X,
   UserRound,
   LayoutDashboard,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "../context/useAuth";
 
@@ -19,6 +20,18 @@ const Navbar = () => {
     document.body.style.overflow = open ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
   }, [open]);
+
+  const getDashboardRoute = () => {
+    if (!user) return "/login";
+    if (user.role === "admin") return "/admin/dashboard";
+    return "/user";
+  };
+
+  const getDashboardIcon = () => {
+    if (!user) return <UserRound />;
+    if (user.role === "admin") return <Shield />;
+    return <LayoutDashboard />;
+  };
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -43,10 +56,8 @@ const Navbar = () => {
 
             {loading ? (
               <div className="w-5 h-5 bg-gray-200 rounded-full animate-pulse" />
-            ) : !user ? (
-              <NavIcon to="/login" icon={<UserRound />} />
             ) : (
-              <NavIcon to="/user" icon={<LayoutDashboard />} />
+              <NavIcon to={getDashboardRoute()} icon={getDashboardIcon()} />
             )}
 
             <NavIcon to="/cart" icon={<ShoppingCart />} />
@@ -72,16 +83,13 @@ const Navbar = () => {
       >
 
         <div className="flex items-center justify-between px-5 h-16 border-b">
-
           <div className="flex items-center">
             <span className="font-serif text-3xl text-[#1F3D2B]">V</span>
             <span className="font-semibold text-lg text-[#1F3D2B]">elnixa</span>
           </div>
-
           <button onClick={() => setOpen(false)}>
             <X size={24} />
           </button>
-
         </div>
 
         <div className="px-6 pt-8 flex flex-col gap-6 text-base font-medium">
@@ -97,10 +105,8 @@ const Navbar = () => {
 
           {loading ? (
             <div className="w-5 h-5 bg-gray-200 rounded-full animate-pulse" />
-          ) : !user ? (
-            <NavIcon to="/login" icon={<UserRound size={22} />} />
           ) : (
-            <NavIcon to="/user" icon={<LayoutDashboard size={22} />} />
+            <NavIcon to={getDashboardRoute()} icon={getDashboardIcon()} />
           )}
 
           <NavIcon to="/cart" icon={<ShoppingCart size={22} />} />
@@ -128,7 +134,6 @@ const NavItem = ({ to, label }) => (
   </NavLink>
 );
 
-
 const MobileNavItem = ({ to, label, onClick }) => (
   <NavLink
     to={to}
@@ -145,7 +150,7 @@ const NavIcon = ({ to, icon }) => (
   <NavLink
     to={to}
     className={({ isActive }) =>
-      `${isActive ? "text-[#1F3D2B]" : "text-[#6B7280]"} hover:text-[#2F6B4F]}`
+      `${isActive ? "text-[#1F3D2B]" : "text-[#6B7280]"} hover:text-[#2F6B4F] transition-colors`
     }
   >
     {icon}
