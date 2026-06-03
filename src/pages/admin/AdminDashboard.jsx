@@ -165,7 +165,7 @@ const AdminDashboard = () => {
                     await logout();
                     navigate("/login");
                   }}
-                  className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+                  className="bg-white/20 cursor-pointer hover:bg-white/30 px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2"
                 >
                   <FiLogOut size={16} /> Logout
                 </button>
@@ -205,13 +205,13 @@ const AdminDashboard = () => {
           {/* Tabs */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="flex border-b border-gray-200 overflow-x-auto">
-              <button onClick={() => setActiveTab("overview")} className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-all ${activeTab === "overview" ? "text-[#2F6B4F] border-b-2 border-[#2F6B4F]" : "text-gray-500 hover:text-gray-700"}`}>
+              <button onClick={() => setActiveTab("overview")} className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-all cursor-pointer ${activeTab === "overview" ? "text-[#2F6B4F] border-b-2 border-[#2F6B4F]" : "text-gray-500 hover:text-gray-700"}`}>
                 <FiGrid className="inline mr-2" size={16} /> Overview
               </button>
-              <button onClick={() => setActiveTab("products")} className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-all ${activeTab === "products" ? "text-[#2F6B4F] border-b-2 border-[#2F6B4F]" : "text-gray-500 hover:text-gray-700"}`}>
+              <button onClick={() => setActiveTab("products")} className={`px-4 sm:px-6 py-3 cursor-pointer text-sm font-medium whitespace-nowrap transition-all ${activeTab === "products" ? "text-[#2F6B4F] border-b-2 border-[#2F6B4F]" : "text-gray-500 hover:text-gray-700"}`}>
                 <FiPackage className="inline mr-2" size={16} /> Products ({products.length})
               </button>
-              <button onClick={() => setActiveTab("users")} className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-all ${activeTab === "users" ? "text-[#2F6B4F] border-b-2 border-[#2F6B4F]" : "text-gray-500 hover:text-gray-700"}`}>
+              <button onClick={() => setActiveTab("users")} className={`px-4 sm:px-6 cursor-pointer py-3 text-sm font-medium whitespace-nowrap transition-all ${activeTab === "users" ? "text-[#2F6B4F] border-b-2 border-[#2F6B4F]" : "text-gray-500 hover:text-gray-700"}`}>
                 <FiUsers className="inline mr-2" size={16} /> Users ({users.length})
               </button>
             </div>
@@ -229,7 +229,7 @@ const AdminDashboard = () => {
                             <p className="font-medium text-gray-900">{product.name}</p>
                             <p className="text-sm text-gray-500">${product.price}</p>
                           </div>
-                          <button onClick={() => navigate(`/products/${product._id}`)} className="text-[#2F6B4F]">
+                          <button onClick={() => navigate(`/products/${product._id}`)} className="text-[#2F6B4F] cursor-pointer">
                             <FiEye size={18} />
                           </button>
                         </div>
@@ -265,7 +265,7 @@ const AdminDashboard = () => {
                 <div>
                   <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900">All Products</h3>
-                    <button onClick={() => navigate("/admin/products/new")} className="bg-[#2F6B4F] hover:bg-[#24563F] text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2">
+                    <button onClick={() => navigate("/admin/products/new")} className="bg-[#2F6B4F] hover:bg-[#24563F] text-white cursor-pointer px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2">
                       <FiPlus size={16} /> Add Product
                     </button>
                   </div>
@@ -297,10 +297,10 @@ const AdminDashboard = () => {
                             </td>
                             <td className="p-3">
                               <div className="flex gap-2">
-                                <button onClick={() => navigate(`/admin/products/edit/${product._id}`)} className="text-blue-600">
+                                <button onClick={() => navigate(`/admin/products/edit/${product._id}`)} className="text-blue-600 cursor-pointer">
                                   <FiEdit size={16} />
                                 </button>
-                                <button onClick={() => handleDeleteProduct(product._id)} className="text-red-600">
+                                <button onClick={() => handleDeleteProduct(product._id)} className="text-red-600 cursor-pointer">
                                   <FiTrash2 size={16} />
                                 </button>
                               </div>

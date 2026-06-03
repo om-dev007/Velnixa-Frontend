@@ -190,7 +190,7 @@ const Like = () => {
                   <div className="flex flex-row sm:flex-col gap-2 sm:gap-2.5 sm:w-32">
                     <button
                       onClick={() => handleAddToCart(item.id)}
-                      className="flex-1 sm:w-full flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2F6B4F] hover:bg-[#24563F] text-white transition-all duration-200 text-sm font-medium"
+                      className="flex-1 sm:w-full flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2F6B4F] cursor-pointer hover:bg-[#24563F] text-white transition-all duration-200 text-sm font-medium"
                     >
                       <ShoppingCart size={16} />
                       Add to Cart
@@ -198,7 +198,7 @@ const Like = () => {
 
                     <button
                       onClick={() => removeFromWishlist(item.id)}
-                      className="flex-1 sm:w-full flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 transition-all duration-200 text-sm font-medium"
+                      className="flex-1 sm:w-full cursor-pointer flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 transition-all duration-200 text-sm font-medium"
                     >
                       <Trash2 size={16} />
                       Remove
