@@ -1,34 +1,26 @@
+// src/context/AuthProvider.jsx
 import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { getProfile } from "../api/user.api";
-import {
-  loginUser,
-  logoutUser,
-} from "../api/auth.api";
+import { loginUser, logoutUser } from "../api/auth.api";
 
 export const AuthProvider = ({ children }) => {
-
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const checkAuth = async () => {
-
     try {
-
       const res = await getProfile();
-
-      setUser(res.data.data);
-
+      if (res.data?.success) {
+        setUser(res.data.data);
+      } else {
+        setUser(null);
+      }
     } catch {
-
       localStorage.removeItem("accessToken");
-
       setUser(null);
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -36,57 +28,45 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  // src/context/AuthProvider.jsx (Sirf login function change karo)
   const login = async (credentials) => {
 
     try {
+      const response = await loginUser(credentials);
 
-      const res =
-        await loginUser(credentials);
-
-      if (!res.data.success) {
-        throw new Error(
-          res.data.message
-        );
+      // ✅ Check karo response ka data
+      if (!response.data.success) {
+        return {
+          success: false,
+          message: response.data.message || "Login failed",
+        };
       }
 
-      localStorage.setItem(
-        "accessToken",
-        res.data.data.accessToken
-      );
-
+      localStorage.setItem("accessToken", response.data.data.accessToken);
       await checkAuth();
 
       return {
         success: true,
-        message: res.data.message,
+        message: response.data.message || "Login successful",
       };
-
     } catch (error) {
-
       return {
         success: false,
-        message: error.message,
+        message: error.message || "An unexpected error occurred",
       };
     }
   };
 
   const logout = async () => {
-
     try {
-
       await logoutUser();
-
-      localStorage.removeItem(
-        "accessToken"
-      );
-
+      localStorage.removeItem("accessToken");
       setUser(null);
-
+      return { success: true, message: "Logged out successfully" };
     } catch (error) {
-
       return {
         success: false,
-        message: error.message,
+        message: error.message || "Logout failed",
       };
     }
   };

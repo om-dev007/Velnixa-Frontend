@@ -47,7 +47,7 @@ const UserDashboard = () => {
         setWishlistCount(wishlistItems.filter(item => item?.productId).length);
         setCartCount(cartItems.filter(item => item?.productId).length);
       } catch (err) {
-        console.log(err);
+        console.log("Error in userdashboard: ", err);
       }
     };
 

@@ -37,36 +37,22 @@ const Login = () => {
 
     const formHandler = async (e) => {
         e.preventDefault();
-
         setLoading(true);
 
         try {
-
             const res = await login(input);
 
             if (!res.success) {
-                throw new Error(res.message);
+                showToast(res.message, "error");
+                setLoading(false);
+                return;
             }
 
-            showToast(
-                res.message || "Login Successful!",
-                "success"
-            );
-
-            navigate(
-                redirectPath,
-                {
-                    replace: true,
-                }
-            );
-
+            showToast(res.message || "Login Successful!", "success");
+            navigate(redirectPath, { replace: true });
         } catch (error) {
-
-            showToast(
-                error?.response?.data?.message || error.message || "Login Failed",
-                "error"
-            );
-
+            console.error("Unexpected error:", error);
+            showToast("Something went wrong", "error");
         } finally {
             setLoading(false);
         }
@@ -125,8 +111,8 @@ const Login = () => {
 
                             {/* Forgot Password Link - Added Here */}
                             <div className="text-right mt-1">
-                                <Link 
-                                    to="/forgot-password" 
+                                <Link
+                                    to="/forgot-password"
                                     className="text-xs sm:text-sm text-[#2F6B4F] hover:text-[#24563F] font-medium transition-colors"
                                 >
                                     Forgot Password?

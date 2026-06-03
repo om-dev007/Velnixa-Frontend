@@ -46,27 +46,25 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch products
       const productsRes = await getAllProducts();
-      console.log("Products response:", productsRes); // Debug log
-      
+
       if (productsRes.success) {
         setProducts(productsRes.data || []);
       } else {
         console.error("Failed to fetch products:", productsRes.message);
       }
-      
+
       // Fetch users
       const usersRes = await getAllUsers();
-      console.log("Users response:", usersRes); // Debug log
-      
+
       if (usersRes.success) {
         setUsers(usersRes.data || []);
       } else {
         console.error("Failed to fetch users:", usersRes.message);
       }
-      
+
     } catch (error) {
       console.error("Error fetching admin data:", error);
       setToast({ message: "Error fetching data", type: "error" });
@@ -91,7 +89,7 @@ const AdminDashboard = () => {
       } else {
         setToast({ message: res.message || "Failed to delete product", type: "error" });
       }
-    } catch (error) {
+    } catch {
       setToast({ message: "Error deleting product", type: "error" });
     }
   };
@@ -106,7 +104,7 @@ const AdminDashboard = () => {
       } else {
         setToast({ message: res.message || "Failed to delete user", type: "error" });
       }
-    } catch (error) {
+    } catch {
       setToast({ message: "Error deleting user", type: "error" });
     }
   };
@@ -250,9 +248,8 @@ const AdminDashboard = () => {
                             <p className="font-medium text-gray-900">{u.name}</p>
                             <p className="text-sm text-gray-500">{u.email}</p>
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-green-100 text-green-700"
-                          }`}>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-green-100 text-green-700"
+                            }`}>
                             {u.role || "user"}
                           </span>
                         </div>
@@ -344,16 +341,14 @@ const AdminDashboard = () => {
                             <td className="p-3 font-medium text-gray-900">{u.name}</td>
                             <td className="p-3 text-gray-600">{u.email}</td>
                             <td className="p-3">
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-green-100 text-green-700"
-                              }`}>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-green-100 text-green-700"
+                                }`}>
                                 {u.role || "user"}
                               </span>
                             </td>
                             <td className="p-3">
-                              <span className={`px-2 py-1 rounded-full text-xs ${
-                                u.isVerified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                              }`}>
+                              <span className={`px-2 py-1 rounded-full text-xs ${u.isVerified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                                }`}>
                                 {u.isVerified ? "Verified" : "Pending"}
                               </span>
                             </td>
@@ -386,7 +381,7 @@ const AdminDashboard = () => {
           <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
         </div>
       )}
-      
+
       <Footer />
     </>
   );
