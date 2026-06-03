@@ -149,7 +149,7 @@ const AdminDashboard = () => {
       <section className="min-h-screen bg-[#FAF8F5] px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6 sm:py-8 md:py-10 lg:py-12">
         <div className="max-w-7xl mx-auto">
           {/* Admin Header */}
-          <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#1F3D2B] via-[#2F6B4F] to-[#3A8060] text-white p-5 sm:p-6 md:p-8 lg:p-10 shadow-xl mb-6 sm:mb-8">
+          <div className="rounded-2xl sm:rounded-3xl bg-linear-to-r from-[#1F3D2B] via-[#2F6B4F] to-[#3A8060] text-white p-5 sm:p-6 md:p-8 lg:p-10 shadow-xl mb-6 sm:mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
                 <p className="text-xs sm:text-sm uppercase tracking-wider text-white/70 mb-1">Admin Panel</p>
@@ -227,7 +227,7 @@ const AdminDashboard = () => {
                         <div key={product._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                           <div>
                             <p className="font-medium text-gray-900">{product.name}</p>
-                            <p className="text-sm text-gray-500">₹{product.price}</p>
+                            <p className="text-sm text-gray-500">${product.price}</p>
                           </div>
                           <button onClick={() => navigate(`/products/${product._id}`)} className="text-[#2F6B4F]">
                             <FiEye size={18} />
@@ -288,7 +288,7 @@ const AdminDashboard = () => {
                               <img src={product.image} alt={product.name} className="w-10 h-10 object-cover rounded" />
                             </td>
                             <td className="p-3 font-medium text-gray-900">{product.name}</td>
-                            <td className="p-3">₹{product.price}</td>
+                            <td className="p-3">${product.price}</td>
                             <td className="p-3">
                               <span className="px-2 py-1 bg-gray-100 rounded-full text-xs">{product.category}</span>
                             </td>
